@@ -28,8 +28,8 @@ public class JwtUserDetails implements UserDetailsService {
 
     public UserDetails loadUserById(Long userId) {
         // 1. adım bu id ye sahip bir kullanıcı var mı?
-        Optional<com.kolayik.entity.User> kullanici = userService.findByUserId(userId);
-        if(kullanici.isEmpty()) return null;
+        Optional<com.kolayik.entity.User> user = userService.findByUserId(userId);
+        if(user.isEmpty()) return null;
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         // user role servisinden userId si,ne ait rollerin listesini çelkiyoruz.
         List<UserRole> roleLists = userRoleService.findAllRole(userId);
@@ -39,8 +39,8 @@ public class JwtUserDetails implements UserDetailsService {
         });
 
         return User.builder()
-                .username(kullanici.get().getEmail())
-                .password(kullanici.get().getPassword())
+                .username(user.get().getEmail())
+                .password(user.get().getPassword())
                 .accountLocked(false)
                 .accountExpired(false)
                 .authorities(grantedAuthorities)
