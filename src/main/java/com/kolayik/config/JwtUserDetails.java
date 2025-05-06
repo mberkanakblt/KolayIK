@@ -35,7 +35,7 @@ public class JwtUserDetails implements UserDetailsService {
         List<UserRole> roleLists = userRoleService.findAllRole(userId);
         // bu rol listesini GrantedAuthority içerisine ekliyoruz.
         roleLists.forEach(r->{
-            grantedAuthorities.add(new SimpleGrantedAuthority(r.getRoleName()));
+            grantedAuthorities.add(new SimpleGrantedAuthority(r.get5RoleName()));
         });
 
         return User.builder()
