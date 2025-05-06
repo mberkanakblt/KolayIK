@@ -16,4 +16,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    public String getEmail() {
+        return null;
+    }
+
+    public String getPassword() {
+        return null;
+    }
 }
