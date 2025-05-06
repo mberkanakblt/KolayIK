@@ -14,6 +14,7 @@ public class EmailDosrulamacontroller {
      */
     @GetMapping("/{code}")
     public ResponseEntity<Void> emailVerify(@PathVariable String code){
+
         return ResponseEntity.ok().build();
     }
 }

@@ -1,6 +1,9 @@
 package com.kolayik.entity;
 
+import com.kolayik.utility.enums.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,14 +28,17 @@ public class User {
     @Column(nullable = false, length = 128)
     String sifre;
     String avatar;
+    Status status;
+    String roleName;
+    String companyName;
+
 
 
 
     public String getEmail() {
-        return null;
+        return this.email;
     }
 
     public String getPassword() {
-        return null;
-    }
+        return this.sifre;   }
 }
