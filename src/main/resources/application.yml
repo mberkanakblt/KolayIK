@@ -1,0 +1,16 @@
+server:
+  port: 9090
+
+spring:
+  security:
+    user:
+      name: kolayik
+      password: 1234
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/kolayikdb
+    username: postgres
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
