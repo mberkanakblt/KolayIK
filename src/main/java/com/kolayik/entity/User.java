@@ -27,12 +27,4 @@ public class User {
     String avatar;
 
 
-
-    public String getEmail() {
-        return null;
-    }
-
-    public String getPassword() {
-        return null;
-    }
 }
