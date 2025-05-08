@@ -40,7 +40,7 @@ public class JwtUserDetails implements UserDetailsService {
 
         return User.builder()
                 .username(user.get().getEmail())
-                .password(user.get().getPassword())
+                .password(user.get().getSifre())
                 .accountLocked(false)
                 .accountExpired(false)
                 .authorities(grantedAuthorities)

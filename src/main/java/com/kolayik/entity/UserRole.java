@@ -17,7 +17,7 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String roleName;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    Long userId;
+
+
 }

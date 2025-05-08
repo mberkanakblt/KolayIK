@@ -16,12 +16,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    String ad;
+    String adres;
+    @Column(nullable = false,length = 20)
+    String telefon;
+    @Column(nullable = false, unique = true)
+    String email;
+    @Column(nullable = false, length = 128)
+    String sifre;
+    String avatar;
 
-    public String getEmail() {
-        return null;
-    }
 
-    public String getPassword() {
-        return null;
-    }
 }
