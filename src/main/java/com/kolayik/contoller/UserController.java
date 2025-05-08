@@ -29,7 +29,7 @@ public class UserController {
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;
 
-    @PostMapping(DOREGISTER)
+    @PostMapping(DO_REGISTER)
     public ResponseEntity<BaseResponse<Boolean>> doRegister(@RequestBody @Valid DoRegisterRequestDto dto){
         // Eğer kullanıcının şifreleri eşleşmiyor ise kayıt yapılmaz direkt hata dönülür.
         if(!dto.password().equals(dto.rePassword()))
@@ -70,8 +70,25 @@ public class UserController {
       if(optionalKullanici.isEmpty()) throw new KolayIkException(ErrorType.USER_NOT_FOUND);
       return  ResponseEntity.ok(BaseResponse.<String>builder()
                       .code(200)
-                      .data(optionalKullanici.get().getAd())
+                      .data(optionalKullanici.get().getName())
                       .message("Kullanıcı adı başarı ile getirildi.")
               .build());
+    }
+    @GetMapping("/verify")
+    public ResponseEntity<BaseResponse<String>> verifyEmail(@RequestParam String token) {
+        Optional<User> userOptional = userService.findByToken(token);
+        if (userOptional.isEmpty())
+            throw new KolayIkException(ErrorType.INVALID_TOKEN);
+
+        User user = userOptional.get();
+        user.setEmailVerified(true);
+        user.setVerificationToken(null);
+        userService.save(user);
+
+        return ResponseEntity.ok(BaseResponse.<String>builder()
+                .code(200)
+                .message("Email verified successfully.")
+                .data("Verified")
+                .build());
     }
 }

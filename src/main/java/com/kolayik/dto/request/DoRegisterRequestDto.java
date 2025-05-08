@@ -9,19 +9,24 @@ public record DoRegisterRequestDto(
         @NotNull
         @NotEmpty
         @Size(min = 2, max = 80)
-        String ad,
+        String name,
         @NotNull
         @NotEmpty
         @Size(min = 10, max = 20)
-        String telefon,
+        String phone,
         @NotNull
         @NotEmpty
         @Email
         String email,
+        String address,
+        String avatar,
         @NotNull
         @NotEmpty
         @Size(min = 8, max = 128)
         String password,
+        @NotNull
+        @NotEmpty
+
         @NotNull
         @NotEmpty
         @Size(min = 8, max = 128)
