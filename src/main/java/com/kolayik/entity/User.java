@@ -1,5 +1,6 @@
 package com.kolayik.entity;
 
+import com.kolayik.utility.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,9 +27,7 @@ public class User {
     String password;
     String avatar;
     Status status;
-    String roleName;
     String companyName;
-
     Boolean emailVerified;
     @Column(name = "verification_token")
     String verificationToken;

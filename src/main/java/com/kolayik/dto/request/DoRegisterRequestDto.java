@@ -26,7 +26,7 @@ public record DoRegisterRequestDto(
         String password,
         @NotNull
         @NotEmpty
-
+        String companyName,
         @NotNull
         @NotEmpty
         @Size(min = 8, max = 128)

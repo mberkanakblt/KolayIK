@@ -4,6 +4,7 @@ import com.kolayik.dto.request.DoLoginRequestDto;
 import com.kolayik.dto.request.DoRegisterRequestDto;
 import com.kolayik.entity.User;
 import com.kolayik.repository.UserRepository;
+import com.kolayik.utility.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
 
-
-
     public void doRegister(DoRegisterRequestDto dto) {
         String token = UUID.randomUUID().toString();
 
@@ -29,8 +28,10 @@ public class UserService {
                 .password(passwordEncoder.encode(dto.password()))
                 .email(dto.email())
                 .phone(dto.phone())
+                .companyName(dto.companyName())
                 .avatar(dto.avatar())
                 .address(dto.address())
+                .status(Status.PASIF)
                 .emailVerified(false)
                 .verificationToken(token)
                 .build();
