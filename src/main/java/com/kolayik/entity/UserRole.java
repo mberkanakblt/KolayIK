@@ -16,8 +16,9 @@ public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String roleName;
     Long userId;
+    String roleName;
+
 
 
 }
