@@ -1,5 +1,6 @@
 package com.kolayik.entity;
 
+import com.kolayik.utility.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,15 +17,20 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String ad;
-    String adres;
+    String name;
+    String address;
     @Column(nullable = false,length = 20)
-    String telefon;
+    String phone;
     @Column(nullable = false, unique = true)
     String email;
     @Column(nullable = false, length = 128)
-    String sifre;
+    String password;
     String avatar;
+    Status status;
+    String companyName;
+    Boolean emailVerified;
+    @Column(name = "verification_token")
+    String verificationToken;
 
 
 }

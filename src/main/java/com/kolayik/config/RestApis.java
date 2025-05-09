@@ -9,8 +9,8 @@ public class RestApis {
     public static final String USER = BASE_URL+"/user";
 
 
-    public static final String REGISTER = "/register";
+
     public static final String LOGIN = "/login";
-    public static final String DOREGISTER ="/doregister";
+    public static final String DO_REGISTER ="/doregister";
 
 }
