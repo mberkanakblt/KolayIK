@@ -6,7 +6,6 @@ import com.kolayik.entity.User;
 import com.kolayik.repository.UserRepository;
 import com.kolayik.utility.enums.Status;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,7 +16,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
-    private final PasswordEncoder passwordEncoder;
+
 
 
     public void doRegister(DoRegisterRequestDto dto) {
@@ -25,7 +24,7 @@ public class UserService {
 
         User user = User.builder()
                 .name(dto.name())
-                .password(passwordEncoder.encode(dto.password()))
+                .password(dto.password())
                 .email(dto.email())
                 .phone(dto.phone())
                 .companyName(dto.companyName())
