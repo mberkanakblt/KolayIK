@@ -3,6 +3,9 @@ package com.kolayik.repository;
 import com.kolayik.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
 
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findOptionalByEmailAndPassword(String email, String password);
+    Optional<User> findByVerificationToken(String token);
 }

@@ -5,15 +5,38 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class KolayIkSecurityConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();
+    }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,18 +47,22 @@ public class KolayIkSecurityConfig {
          */
         http.authorizeHttpRequests(req -> {
             req
-                    .requestMatchers("/swagger-ui/**","v3/api-docs/**","/dev/v1/user/**") // belirli bir URL adresine erişimi yönet
+                    .requestMatchers("/dev/v1/user/verify/**",
+                            "/swagger-ui/**","v3/api-docs/**",
+                            "/dev/v1/user/**") // belirli bir URL adresine erişimi yönet
                     .permitAll() // yukarıdaki adrese ve adreslere izin ver.
                     /**
                      * Aşağıdakiler rollere göre izin verme şuanda roller kapalidir.!!
                      */
-                 //   .requestMatchers("/dev/v1/kategori/**").hasAuthority("KATEGORI_ADMIN")
+                    //   .requestMatchers("/dev/v1/kategori/**").hasAuthority("KATEGORI_ADMIN")
                     // Yukarıdaki, Oturum açanın yetki kimliği USER, ADMİN (VS)... tipindeyse erişime izin ver
                     .anyRequest() //yapılan tüm istek türleri(/admin ,/user,comment/getById...)
                     .authenticated(); // oturum açma zorunluluğu getirir.
 
         });
         http.csrf(AbstractHttpConfigurer::disable);
+
+        http.cors(c -> corsConfigurationSource());
         /**
          * Kullanıcıların sisteme nasıl giriş yapılacakları. Yani kendi kimliklerini nasıl doğrulayacaklar.
          *

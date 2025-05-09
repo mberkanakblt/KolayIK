@@ -15,4 +15,14 @@ public class UserRoleService {
     public List<UserRole> findAllRole(Long userId){
         return userRoleRepository.findByUserId(userId);
     }
+
+
+    public void addRole(String roleName, Long userId){
+        userRoleRepository.save(UserRole.builder()
+                .roleName(roleName)
+                .userId(userId)
+                .build());
+    }
+
+
 }
