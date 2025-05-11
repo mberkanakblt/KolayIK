@@ -48,13 +48,14 @@ public class KolayIkSecurityConfig {
         http.authorizeHttpRequests(req -> {
             req
                     .requestMatchers("/dev/v1/user/verify/**",
+                            "/dev/v1/comment/**",
                             "/swagger-ui/**","v3/api-docs/**",
                             "/dev/v1/user/**") // belirli bir URL adresine erişimi yönet
                     .permitAll() // yukarıdaki adrese ve adreslere izin ver.
                     /**
                      * Aşağıdakiler rollere göre izin verme şuanda roller kapalidir.!!
                      */
-                    //   .requestMatchers("/dev/v1/kategori/**").hasAuthority("KATEGORI_ADMIN")
+      //                 .requestMatchers("/dev/v1/comment/add-comment").hasAuthority("MANAGER")
                     // Yukarıdaki, Oturum açanın yetki kimliği USER, ADMİN (VS)... tipindeyse erişime izin ver
                     .anyRequest() //yapılan tüm istek türleri(/admin ,/user,comment/getById...)
                     .authenticated(); // oturum açma zorunluluğu getirir.
