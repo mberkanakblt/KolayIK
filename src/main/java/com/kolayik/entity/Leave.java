@@ -1,6 +1,5 @@
 package com.kolayik.entity;
 
-import com.kolayik.utility.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "tblrole")
-public class UserRole {
+@Table(name = "tblleave")
+public class Leave {
+    /**
+     * Bu sayfa İzin sayfasıdır
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Long userId;
-    Role roleName;
-
-
 
 }

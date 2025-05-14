@@ -57,11 +57,12 @@ public class UserController {
     public ResponseEntity<BaseResponse<Boolean>> addRole(@RequestBody AddRoleRequestDto dto){
         userRoleService.addRole(dto.roleName(), dto.userId());
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                        .code(200)
-                        .message("Ok")
-                        .data(true)
+                .code(200)
+                .message("Ok")
+                .data(true)
                 .build());
     }
+
     @GetMapping("/get-user-name/{token}")
     public ResponseEntity<BaseResponse<String>> getUserName(@PathVariable String token){
       Optional<Long> optionalUserId = jwtManager.validateToken(token);

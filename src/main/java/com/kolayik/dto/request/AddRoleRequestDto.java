@@ -1,7 +1,9 @@
 package com.kolayik.dto.request;
 
+import com.kolayik.utility.enums.Role;
+
 public record AddRoleRequestDto(
-        String roleName,
+        Role roleName,
         Long userId
 ) {
 }

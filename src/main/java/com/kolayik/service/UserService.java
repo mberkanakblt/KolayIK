@@ -4,6 +4,7 @@ import com.kolayik.dto.request.DoLoginRequestDto;
 import com.kolayik.dto.request.DoRegisterRequestDto;
 import com.kolayik.entity.User;
 import com.kolayik.repository.UserRepository;
+import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
