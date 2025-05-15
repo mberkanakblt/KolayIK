@@ -11,9 +11,25 @@ public class RestApis {
 
 
 
-    public static final String LOGIN = "/login";
-    public static final String DO_REGISTER ="/do-register";
+    public static final String LOGIN =BASE_URL+ "/login";
+    public static final String DO_REGISTER ="/doregister";
     public static final String ADD_COMMENT = "/add-comment";
     public static final String GET_COMMENT = "/get-comment";
+
+    public static final String ALLOW = BASE_URL+"/allow";
+
+    public static final String ALLOW_REGISTER ="/allowregister";
+    public static final String ALLOW_UPDATE ="/allowupdate";
+    public static final String GET_ALLOW_LIST ="/get-allowlist";
+
+
+
+    public static final String ALLOWMANAGE =BASE_URL+ "/allowmanage";
+
+    public static final String ALLOW_MANAGE_REGISTER ="/allowmanageregister";
+    public static final String ALLOW_MANAGE_UPDATE ="/allowmanageupdate";
+    public static final String GET_REQUEST_ALLOW_MANAGE ="/get-request-allow-manage";
+    public static final String GET_ALLOW_MANAGE_LIST ="/get-allow-manage-list";
+    public static final String ALLOW_MANAGE_APROVE ="/aprove";
 
 }
