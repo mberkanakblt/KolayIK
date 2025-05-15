@@ -4,6 +4,7 @@ import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.AddRoleRequestDto;
 import com.kolayik.dto.request.DoLoginRequestDto;
 import com.kolayik.dto.request.DoRegisterRequestDto;
+import com.kolayik.dto.request.ResetPasswordRequest;
 import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.entity.User;
 
@@ -53,6 +54,28 @@ public class UserController {
                         .message("Başaralı şekilde giriş yapıldı.")
                 .build());
     }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<BaseResponse<Boolean>> forgotPassword(@RequestParam String email){
+        userService.forgotPassword(email);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                        .code(200)
+                        .message("E posta gonderildi")
+                        .data(true)
+                .build());
+
+
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<BaseResponse<Boolean>> resetPassword(@RequestBody ResetPasswordRequest dto) {
+        userService.resetPassword(dto.token(), dto.newPassword());
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .data(true)
+                .message("Şifre başarıyla güncellendi.")
+                .build());
+    }
+
+
     @PostMapping("/add-role")
     public ResponseEntity<BaseResponse<Boolean>> addRole(@RequestBody AddRoleRequestDto dto){
         userRoleService.addRole(dto.roleName(), dto.userId());

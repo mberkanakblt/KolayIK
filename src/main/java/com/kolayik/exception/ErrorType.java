@@ -16,6 +16,7 @@ public enum ErrorType {
     EMAIL_SIFRE_HATASI(4004, "Kullanıcı adı ya da şifre hatalısır", BAD_REQUEST),
     INVALID_TOKEN(4999, "Geçersiz token bilgisi", FORBIDDEN),
     USER_NOT_FOUND(2004,"Kullanici bulunamadı", INTERNAL_SERVER_ERROR),
+    EMAIL_NOT_FOUND(404,"E-posta sistemde kayıtlı değil.",INTERNAL_SERVER_ERROR),
     INTERNAL_SERVER(5000, "Sunucuda beklenmeyen bir hata",INTERNAL_SERVER_ERROR);
 
 
