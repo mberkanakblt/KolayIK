@@ -2,12 +2,19 @@ package com.kolayik.service;
 
 import com.kolayik.dto.request.DoLoginRequestDto;
 import com.kolayik.dto.request.DoRegisterRequestDto;
+import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
+import com.kolayik.exception.ErrorType;
+import com.kolayik.exception.KolayIkException;
+import com.kolayik.repository.PasswordResetTokenRepository;
 import com.kolayik.repository.UserRepository;
+import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +23,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
 
 
 
@@ -59,6 +67,48 @@ public class UserService {
 
     public void save(User user) {
         userRepository.save(user);
+    }
+
+    public void forgotPassword(String email) {
+        Optional<User> optionalUser = findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new KolayIkException(ErrorType.EMAIL_NOT_FOUND);
+        }
+
+        User user = optionalUser.get();
+        String token = UUID.randomUUID().toString();
+
+        PasswordResetToken resetToken = PasswordResetToken.builder()
+                .token(token)
+                .user(user)
+                .expirationDate(LocalDateTime.now().plusMinutes(15))
+                .build();
+
+        passwordResetTokenRepository.save(resetToken);
+        emailService.sendResetPasswordEmail(user.getEmail(), token);
+
+    }
+
+    private Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+
+    public void resetPassword(String token, String newPassword) {
+            Optional<PasswordResetToken> resetTokenOpt = passwordResetTokenRepository.findByToken(token);
+
+            if (resetTokenOpt.isEmpty() || resetTokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
+                throw new KolayIkException(ErrorType.INVALID_TOKEN);
+            }
+
+            PasswordResetToken resetToken = resetTokenOpt.get();
+            User user = resetToken.getUser();
+
+            user.setPassword(newPassword);
+            userRepository.save(user);
+
+            passwordResetTokenRepository.delete(resetToken); // Token kullanıldıktan sonra silinir.
+
     }
 }
 
