@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -18,10 +16,6 @@ import java.util.List;
 
 @Configuration
 public class KolayIkSecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
@@ -47,14 +41,15 @@ public class KolayIkSecurityConfig {
          */
         http.authorizeHttpRequests(req -> {
             req
-                    .requestMatchers("/dev/v1/user/verify/**",
+                    .requestMatchers("/dev/v1/user/reset-password/**","/dev/v1/user/forgot-password/**","/dev/v1/user/verify/**",
+                            "/dev/v1/comment/**",
                             "/swagger-ui/**","v3/api-docs/**",
                             "/dev/v1/user/**") // belirli bir URL adresine erişimi yönet
                     .permitAll() // yukarıdaki adrese ve adreslere izin ver.
                     /**
                      * Aşağıdakiler rollere göre izin verme şuanda roller kapalidir.!!
                      */
-                    //   .requestMatchers("/dev/v1/kategori/**").hasAuthority("KATEGORI_ADMIN")
+      //                 .requestMatchers("/dev/v1/comment/add-comment").hasAuthority("MANAGER")
                     // Yukarıdaki, Oturum açanın yetki kimliği USER, ADMİN (VS)... tipindeyse erişime izin ver
                     .anyRequest() //yapılan tüm istek türleri(/admin ,/user,comment/getById...)
                     .authenticated(); // oturum açma zorunluluğu getirir.

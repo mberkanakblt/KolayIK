@@ -1,25 +1,27 @@
 package com.kolayik.entity;
 
-import com.kolayik.utility.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "tblrole")
-public class UserRole {
+@Table(name = "tblcomment")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Long userId;
-    Role roleName;
-
-
+    String description;
+    LocalDateTime commentDate;
+    @ManyToOne(fetch = FetchType.EAGER)
+    User user;
 
 }

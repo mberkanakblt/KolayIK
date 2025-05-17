@@ -24,4 +24,16 @@ public class EmailService {
 
         mailSender.send(message);
     }
+    public void sendResetPasswordEmail(String to, String token) {
+        String subject = "Şifre Yenileme";
+        String resetLink = "http://localhost:5173/refresh-password?token=" + token;
+        String text = "Şifrenizi yenilemek için aşağıdaki bağlantıya tıklayın:\n" + resetLink;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+
+        mailSender.send(message);
+    }
 }
