@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findOptionalByEmailAndPassword(String email, String password);
     Optional<User> findByVerificationToken(String token);
+    Optional<User> findByNameAndSurname(String name, String surname);
     Optional<User> findByEmail(String email);
     @Query(value = "SELECT new com.kolayik.view.VwManager(u.id,u.name,u.surname, u.email, u.status) " +
             "FROM User u WHERE u.id IN " +
