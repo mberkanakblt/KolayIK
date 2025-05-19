@@ -1,4 +1,4 @@
-package com.kolayik.contoller;
+package com.kolayik.controller;
 
 import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.service.CommentService;
