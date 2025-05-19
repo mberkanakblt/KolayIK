@@ -2,6 +2,8 @@ package com.kolayik.service;
 
 import com.kolayik.dto.request.DoLoginRequestDto;
 import com.kolayik.dto.request.DoRegisterRequestDto;
+import com.kolayik.dto.request.ProfileUpdateRequestDto;
+import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
 import com.kolayik.exception.ErrorType;
@@ -11,7 +13,6 @@ import com.kolayik.repository.UserRepository;
 import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,33 +26,17 @@ public class UserService {
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
-
-
     public void doRegister(DoRegisterRequestDto dto) {
-        String token = UUID.randomUUID().toString();
-
         User user = User.builder()
                 .name(dto.name())
                 .password(dto.password())
                 .email(dto.email())
-                .phone(dto.phone())
-                .companyName(dto.companyName())
-                .avatar(dto.avatar())
-                .address(dto.address())
-                .status(Status.PASIF)
-                .emailVerified(false)
-                .verificationToken(token)
+                .role(Role.PERSONNEL)
+                .status(Status.AKTIF)
                 .build();
-        System.out.println("=== TOKEN ===");
-        System.out.println(token);
-        System.out.println("=== USER ===");
-        System.out.println(user);
-
-
         userRepository.save(user);
-        emailService.sendVerificationEmail(user.getEmail(), token);
-
     }
+
     public Optional<User> findByUserId(Long userId) {
         return userRepository.findById(userId);
     }
@@ -59,7 +44,6 @@ public class UserService {
     public Optional<User> findByEmailPassword(DoLoginRequestDto dto) {
         return userRepository.findOptionalByEmailAndPassword(dto.email(), dto.password());
     }
-
 
     public Optional<User> findByToken(String token) {
         return userRepository.findByVerificationToken(token);
@@ -70,45 +54,65 @@ public class UserService {
     }
 
     public void forgotPassword(String email) {
-        Optional<User> optionalUser = findByEmail(email);
-        if (optionalUser.isEmpty()) {
-            throw new KolayIkException(ErrorType.EMAIL_NOT_FOUND);
-        }
-
-        User user = optionalUser.get();
-        String token = UUID.randomUUID().toString();
-
-        PasswordResetToken resetToken = PasswordResetToken.builder()
-                .token(token)
-                .user(user)
-                .expirationDate(LocalDateTime.now().plusMinutes(15))
-                .build();
-
-        passwordResetTokenRepository.save(resetToken);
-        emailService.sendResetPasswordEmail(user.getEmail(), token);
-
     }
 
     private Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-
     public void resetPassword(String token, String newPassword) {
-            Optional<PasswordResetToken> resetTokenOpt = passwordResetTokenRepository.findByToken(token);
+    }
 
-            if (resetTokenOpt.isEmpty() || resetTokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
-                throw new KolayIkException(ErrorType.INVALID_TOKEN);
-            }
+    // AŞAĞIDA PROFİL İŞLEMLERİ EKLENDİ
 
-            PasswordResetToken resetToken = resetTokenOpt.get();
-            User user = resetToken.getUser();
+    /**
+     * Kullanıcının profil bilgilerini döner.
+     */
+    public ProfileResponseDto getProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        return new ProfileResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getCompanyName(),
+                user.getAddress(),
+                user.getAvatar()
+        );
+    }
 
-            user.setPassword(newPassword);
-            userRepository.save(user);
+    /**
+     * Kullanıcının profil bilgilerini günceller.
+     */
+    public void updateProfile(Long userId, ProfileUpdateRequestDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
 
-            passwordResetTokenRepository.delete(resetToken); // Token kullanıldıktan sonra silinir.
+        user.setName(dto.getName());
+        user.setPhone(dto.getPhone());
+        user.setCompanyName(dto.getCompanyName());
+        user.setAddress(dto.getAddress());
+        user.setAvatar(dto.getAvatar());
 
+
+        userRepository.save(user);
+    }
+
+    /**
+     * Kullanıcı hesabını pasifleştirir.
+     */
+    public void deactivate(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        user.setStatus(Status.PASIF);
+        userRepository.save(user);
+    }
+
+    /**
+     * Kullanıcı hesabını kalıcı olarak siler.
+     */
+    public void deleteAccount(Long userId) {
+        userRepository.deleteById(userId);
     }
 }
-
