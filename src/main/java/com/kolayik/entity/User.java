@@ -1,7 +1,6 @@
 package com.kolayik.entity;
 
 import com.kolayik.utility.enums.Status;
-import com.kolayik.utility.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
+    String surname;
     String address;
     @Column(nullable = false,length = 20)
     String phone;
@@ -27,14 +27,13 @@ public class User {
     @Column(nullable = false, length = 128)
     String password;
     String avatar;
-    @Enumerated(EnumType.STRING)
     Status status;
-    @Enumerated(EnumType.STRING)
-    Role role;
     String companyName;
     Boolean emailVerified;
     @Column(name = "verification_token")
     String verificationToken;
+    @OneToOne(mappedBy = "user")
+    Company company;
 
 
 }

@@ -44,7 +44,8 @@ public class KolayIkSecurityConfig {
                     .requestMatchers("/dev/v1/user/reset-password/**","/dev/v1/user/forgot-password/**","/dev/v1/user/verify/**",
                             "/dev/v1/comment/**",
                             "/swagger-ui/**","v3/api-docs/**",
-                            "/dev/v1/user/**") // belirli bir URL adresine erişimi yönet
+                            "/dev/v1/user/**","/dev/v1/membership/**"
+                    ,"/dev/v1/company/**") // belirli bir URL adresine erişimi yönet
                     .permitAll() // yukarıdaki adrese ve adreslere izin ver.
                     /**
                      * Aşağıdakiler rollere göre izin verme şuanda roller kapalidir.!!

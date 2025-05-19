@@ -1,5 +1,6 @@
 package com.kolayik.entity;
 
+import com.kolayik.utility.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +17,13 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    String name;
+    String address;
+    String phone;
+    Status status;
+    String sector;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    User user;
 
 }
