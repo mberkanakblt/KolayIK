@@ -18,6 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
+    String surname;
     String address;
     @Column(nullable = false,length = 20)
     String phone;

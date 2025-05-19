@@ -37,6 +37,7 @@ public class UserService {
 
         User user = User.builder()
                 .name(dto.name())
+                .surname(dto.surname())
                 .password(dto.password())
                 .email(dto.email())
                 .phone(dto.phone())

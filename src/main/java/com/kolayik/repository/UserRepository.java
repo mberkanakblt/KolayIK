@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findOptionalByEmailAndPassword(String email, String password);
     Optional<User> findByVerificationToken(String token);
     Optional<User> findByEmail(String email);
-    @Query(value = "SELECT new com.kolayik.view.VwManager(u.id,u.name, u.email, u.status) " +
+    @Query(value = "SELECT new com.kolayik.view.VwManager(u.id,u.name,u.surname, u.email, u.status) " +
             "FROM User u WHERE u.id IN " +
             "(SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.COMPANY_ADMIN)")
     List<VwManager> getAllManager();

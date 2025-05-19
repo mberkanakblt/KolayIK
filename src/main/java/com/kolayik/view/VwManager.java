@@ -9,6 +9,7 @@ import lombok.Getter;
 public class VwManager {
     Long userId;
     String name;
+    String surname;
     String email;
     Status status;
 }
