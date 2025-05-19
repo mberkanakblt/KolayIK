@@ -10,6 +10,7 @@ public record DoRegisterRequestDto(
         @NotEmpty
         @Size(min = 2, max = 80)
         String name,
+        String surname,
         @NotNull
         @NotEmpty
         @Size(min = 10, max = 20)

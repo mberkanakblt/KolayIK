@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -16,6 +18,10 @@ import java.util.List;
 
 @Configuration
 public class KolayIkSecurityConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
@@ -45,7 +51,11 @@ public class KolayIkSecurityConfig {
                             "/dev/v1/comment/**",
                             "/swagger-ui/**","v3/api-docs/**",
                             "/dev/v1/user/**","/dev/v1/membership/**"
-                    ,"/dev/v1/company/**") // belirli bir URL adresine erişimi yönet
+                    ,"/dev/v1/company/**",           "/dev/v1/user/**",
+                            "/dev/v1/allow/**",
+                            "/dev/v1/allowmanage/**" // belirli bir URL adresine erişimi yönet
+
+                    ) // belirli bir URL adresine erişimi yönet
                     .permitAll() // yukarıdaki adrese ve adreslere izin ver.
                     /**
                      * Aşağıdakiler rollere göre izin verme şuanda roller kapalidir.!!
