@@ -1,4 +1,4 @@
-package com.kolayik.contoller;
+package com.kolayik.controller;
 
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.AddRoleRequestDto;

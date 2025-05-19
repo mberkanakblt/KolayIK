@@ -1,4 +1,4 @@
-package com.kolayik.contoller;
+package com.kolayik.controller;
 
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.AddCompanyRequestDto;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.kolayik.config.RestApis.*;
 
