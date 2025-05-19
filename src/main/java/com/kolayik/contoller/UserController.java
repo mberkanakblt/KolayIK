@@ -12,11 +12,14 @@ import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
+import com.kolayik.view.VwManager;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.kolayik.config.RestApis.USER;
@@ -25,6 +28,7 @@ import static com.kolayik.config.RestApis.*;
 @RequiredArgsConstructor
 @RequestMapping(USER)
 @CrossOrigin("*")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
@@ -115,4 +119,32 @@ public class UserController {
                 .data("Verified")
                 .build());
     }
+    @GetMapping("/get-vw-manager")
+    public ResponseEntity<BaseResponse<List<VwManager>>> getVwManager(){
+        return ResponseEntity.ok(BaseResponse.<List<VwManager>>builder()
+                        .code(200)
+                        .message("Success")
+                        .data(userService.getVwManager())
+
+                .build());
+    }
+    @PutMapping("/approved/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> approvedUser(@PathVariable Long userId){
+        userService.approved(userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Success")
+                .data(true)
+                .build());
+    }
+    @PutMapping("/reject/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> rejectManager(@PathVariable Long userId){
+        userService.reject(userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Success")
+                .data(true)
+                .build());
+    }
+
 }

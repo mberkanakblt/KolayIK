@@ -1,10 +1,13 @@
 package com.kolayik.entity;
 
+import com.kolayik.utility.enums.Plan;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,4 +22,13 @@ public class Membership {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    String name;
+    Plan plan;
+    LocalDateTime createdAt;
+    String description;
+    Double price;
+    Integer userLimit;
+
+
+
 }

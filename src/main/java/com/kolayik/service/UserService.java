@@ -4,17 +4,21 @@ import com.kolayik.dto.request.DoLoginRequestDto;
 import com.kolayik.dto.request.DoRegisterRequestDto;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
+import com.kolayik.entity.UserRole;
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.repository.PasswordResetTokenRepository;
 import com.kolayik.repository.UserRepository;
+import com.kolayik.repository.UserRoleRepository;
 import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
+import com.kolayik.view.VwManager;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +28,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final UserRoleRepository userRoleRepository;
 
 
 
@@ -38,7 +43,7 @@ public class UserService {
                 .companyName(dto.companyName())
                 .avatar(dto.avatar())
                 .address(dto.address())
-                .status(Status.PASIF)
+                .status(Status.ASKIDA)
                 .emailVerified(false)
                 .verificationToken(token)
                 .build();
@@ -47,8 +52,13 @@ public class UserService {
         System.out.println("=== USER ===");
         System.out.println(user);
 
-
         userRepository.save(user);
+        UserRole userRole = UserRole.builder()
+                .userId(user.getId())
+                .roleName(Role.COMPANY_ADMIN)
+                .build();
+        userRoleRepository.save(userRole);
+
         emailService.sendVerificationEmail(user.getEmail(), token);
 
     }
@@ -108,6 +118,27 @@ public class UserService {
             userRepository.save(user);
 
             passwordResetTokenRepository.delete(resetToken); // Token kullanıldıktan sonra silinir.
+
+    }
+
+    public List<VwManager> getVwManager() {
+
+        return userRepository.getAllManager();
+    }
+
+    public void reject(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+        user.setStatus(Status.PASIF);
+        userRepository.save(user);
+    }
+
+    public void approved(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        user.setStatus(Status.AKTIF);
+        userRepository.save(user);
 
     }
 }

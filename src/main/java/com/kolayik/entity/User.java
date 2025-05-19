@@ -31,8 +31,8 @@ public class User {
     Boolean emailVerified;
     @Column(name = "verification_token")
     String verificationToken;
-
-
+    @OneToOne(mappedBy = "user")
+    Company company;
 
 
 }
