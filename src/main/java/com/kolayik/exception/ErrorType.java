@@ -17,7 +17,11 @@ public enum ErrorType {
     INVALID_TOKEN(4999, "Geçersiz token bilgisi", FORBIDDEN),
     USER_NOT_FOUND(2004,"Kullanici bulunamadı", INTERNAL_SERVER_ERROR),
     EMAIL_NOT_FOUND(404,"E-posta sistemde kayıtlı değil.",INTERNAL_SERVER_ERROR),
-    INTERNAL_SERVER(5000, "Sunucuda beklenmeyen bir hata",INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER(5000, "Sunucuda beklenmeyen bir hata",INTERNAL_SERVER_ERROR),
+    EMAIL_ALREADY_EXISTS(4005, "Bu email adresi zaten kullanılmakta.", BAD_REQUEST);
+
+
+
 
 
     int code;

@@ -51,4 +51,6 @@ public class GlobalExceptionHandler {
                 .message(errorType.getMessage())
                 .build(),httpStatus);
     }
+
+
 }
