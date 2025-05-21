@@ -1,5 +1,7 @@
 package com.kolayik.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kolayik.utility.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ public class Company {
     String sector;
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonManagedReference
     User user;
 
 }

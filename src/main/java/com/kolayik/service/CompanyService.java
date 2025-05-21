@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Service
@@ -22,14 +22,15 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
 
-    public void addCompany(AddCompanyRequestDto dto) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
-
+    public void addCompany(AddCompanyRequestDto dto,Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Kullanıcı bulunamadı.");
+        }
         Company company = Company.builder()
                 .name(dto.name())
                 .phone(dto.phone())
-           //     .user(user)
+                .user(optionalUser.get())
                 .address(dto.address())
                 .sector(dto.sector())
                 .status(Status.ASKIDA)
@@ -72,6 +73,7 @@ public class CompanyService {
     public List<VwCompany> getVwCompany() {
         return companyRepository.getAllCompany();
     }
+
 
 
 }

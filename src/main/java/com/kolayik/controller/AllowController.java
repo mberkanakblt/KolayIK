@@ -1,26 +1,16 @@
-package com.kolayik.contoller;
+package com.kolayik.controller;
 
 
 
 import com.kolayik.dto.request.AllowRegisterRequestDto;
 import com.kolayik.dto.response.BaseResponse;
-import com.kolayik.exception.ErrorType;
-import com.kolayik.exception.KolayIkException;
-
-import com.kolayik.repository.AllowRepository;
-
 import com.kolayik.service.AllowService;
 import com.kolayik.view.VwAllow;
-
-import com.kolayik.view.VwComment;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.kolayik.config.RestApis.*;
 

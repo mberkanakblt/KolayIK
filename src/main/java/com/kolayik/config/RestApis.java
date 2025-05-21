@@ -13,7 +13,8 @@ public class RestApis {
 
 
 
-    public static final String LOGIN =BASE_URL+ "/login";
+
+    public static final String LOGIN = "/login";
     public static final String DO_REGISTER ="/doregister";
     public static final String ADD_COMMENT = "/add-comment";
     public static final String GET_COMMENT = "/get-comment";

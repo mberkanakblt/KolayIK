@@ -3,16 +3,16 @@ package com.kolayik.controller;
 import com.kolayik.dto.request.ProfileUpdateRequestDto;
 import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.User;
-import com.kolayik.exception.ErrorType;
-import com.kolayik.exception.KolayIkException;
+
 import com.kolayik.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping()
 @RequiredArgsConstructor
 public class ProfileController {
 

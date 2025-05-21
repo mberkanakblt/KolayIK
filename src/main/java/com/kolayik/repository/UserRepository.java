@@ -1,5 +1,6 @@
 package com.kolayik.repository;
 
+import com.kolayik.entity.Company;
 import com.kolayik.entity.User;
 import com.kolayik.view.VwManager;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM User u WHERE u.id IN " +
             "(SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.COMPANY_ADMIN)")
     List<VwManager> getAllManager();
+
 }

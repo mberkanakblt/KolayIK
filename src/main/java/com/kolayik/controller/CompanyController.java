@@ -5,6 +5,7 @@ import com.kolayik.dto.request.AddCompanyRequestDto;
 import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.entity.Company;
 import com.kolayik.service.CompanyService;
+import com.kolayik.service.UserService;
 import com.kolayik.view.VwCompany;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.kolayik.config.RestApis.*;
 
@@ -23,15 +25,16 @@ import static com.kolayik.config.RestApis.*;
 public class CompanyController {
     private final CompanyService companyService;
     private final JwtManager jwtManager;
+    private final UserService userService;
 
     @PostMapping("/add-company")
     public ResponseEntity<BaseResponse<Boolean>> addCompany(@RequestBody AddCompanyRequestDto dto){
-//        Optional<Long> optionalUserId = jwtManager.validateToken(dto.token());
-        companyService.addCompany(dto);
+        Optional<Long> optionalUserId = jwtManager.validateToken(dto.token());
+        companyService.addCompany(dto,optionalUserId.get());
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                        .code(200)
-                        .message("Success")
-                        .data(true)
+                .code(200)
+                .message("Success")
+                .data(true)
                 .build());
 
     }
@@ -79,4 +82,5 @@ public class CompanyController {
                         .data(companyService.getVwCompany())
                 .build());
     }
+
 }
