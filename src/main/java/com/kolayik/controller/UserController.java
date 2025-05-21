@@ -1,10 +1,7 @@
-package com.kolayik.controller;
+package com.kolayik.contoller;
 
 import com.kolayik.config.JwtManager;
-import com.kolayik.dto.request.AddRoleRequestDto;
-import com.kolayik.dto.request.DoLoginRequestDto;
-import com.kolayik.dto.request.DoRegisterRequestDto;
-import com.kolayik.dto.request.ResetPasswordRequest;
+import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.entity.User;
 
@@ -14,11 +11,16 @@ import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
 import com.kolayik.view.VwManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import com.kolayik.utility.enums.Status;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,6 +120,113 @@ public class UserController {
                 .message("Email verified successfully.")
                 .data("Verified")
                 .build());
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findPersonnelById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @PostMapping(CREATE_PERSONNEL)
+    public ResponseEntity<BaseResponse<Boolean>> createPersonnel(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody @Valid CreatePersonnelDto createPersonnelDto) {
+
+        System.out.println("Headers: " + headers);
+        User user = userService.createPersonnel(createPersonnelDto);
+        System.out.println("Created User: " + user);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Personnel created successfully")
+                .data(true)
+                .build());
+    }
+
+    @GetMapping(GET_ALL_PERSONNEL)
+    public ResponseEntity<BaseResponse<List<User>>> getAllPersonnel() {
+        List<User> personnelList = userService.getAllPersonnel();
+        return ResponseEntity.ok(BaseResponse.<List<User>>builder()
+                .code(200)
+                .message("Personnel list fetched successfully")
+                .data(personnelList)
+                .build());
+    }
+
+
+    @DeleteMapping(DELETE_PERSONNEL + "/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> deletePersonnelByUserId(@PathVariable Long userId) {
+        try {
+            userService.deletePersonnelByUserId(userId);
+            return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                    .code(200)
+                    .data(true)
+                    .message("Personnel associated with user successfully deleted")
+                    .build());
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.<Boolean>builder()
+                    .code(404)
+                    .data(false)
+                    .message(ex.getMessage())
+                    .build());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.<Boolean>builder()
+                    .code(500)
+                    .data(false)
+                    .message("An unexpected error occurred")
+                    .build());
+        }
+
+    }
+
+    @PutMapping(UPDATE_PERSONNEL + "/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> updatePersonnel(
+            @PathVariable Long userId,
+            @RequestBody @Valid UpdatePersonnelDto updatePersonnelDto) {
+        try {
+            userService.updatePersonnel(userId, updatePersonnelDto);
+            return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                    .code(200)
+                    .message("Personnel updated successfully")
+                    .data(true)
+                    .build());
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.<Boolean>builder()
+                    .code(404)
+                    .data(false)
+                    .message(ex.getMessage())
+                    .build());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.<Boolean>builder()
+                    .code(500)
+                    .data(false)
+                    .message("An unexpected error occurred")
+                    .build());
+        }
+    }
+
+    @PatchMapping(UPDATE_PERSONNEL_STATUS + "/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> changePersonnelStatus(
+            @PathVariable Long userId,
+            @RequestParam Status status) {
+        try {
+            userService.changePersonnelStatus(userId, status);
+            return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                    .code(200)
+                    .message("Personnel status updated successfully")
+                    .data(true)
+                    .build());
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.<Boolean>builder()
+                    .code(404)
+                    .data(false)
+                    .message(ex.getMessage())
+                    .build());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.<Boolean>builder()
+                    .code(500)
+                    .data(false)
+                    .message("An unexpected error occurred")
+                    .build());
+        }
     }
     @GetMapping("/get-vw-manager")
     public ResponseEntity<BaseResponse<List<VwManager>>> getVwManager(){

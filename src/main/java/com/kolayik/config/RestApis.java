@@ -19,6 +19,13 @@ public class RestApis {
     public static final String ADD_COMMENT = "/add-comment";
     public static final String GET_COMMENT = "/get-comment";
 
+    public static final String CREATE_PERSONNEL = "/create-personnel";
+    public static final String UPDATE_PERSONNEL = "/update-personnel";
+    public static final String DELETE_PERSONNEL = "/delete-personnel";
+    public static final String GET_ALL_PERSONNEL = "/get-all-personnel";
+    public static final String UPDATE_PERSONNEL_STATUS = "/update-personnel-status";
+
+
     public static final String ALLOW = BASE_URL+"/allow";
 
     public static final String ALLOW_REGISTER ="/allowregister";

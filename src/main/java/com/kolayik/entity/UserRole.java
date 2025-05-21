@@ -1,24 +1,34 @@
 package com.kolayik.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kolayik.utility.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "tblrole")
 public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    Long userId;
-    Role roleName;
+    private Long id;
+
+    @Enumerated(EnumType.STRING)  // Enum string olarak DB'ye kaydolur
+    @Column(nullable = false)
+    private Role roleName;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
+    private User personnel;
 
 
 

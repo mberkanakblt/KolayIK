@@ -25,6 +25,10 @@ public enum ErrorType {
     INTERNAL_SERVER(5000, "Sunucuda beklenmeyen bir hata",INTERNAL_SERVER_ERROR);
 
 
+
+
+
+
     int code;
     String message;
     HttpStatus httpStatus;

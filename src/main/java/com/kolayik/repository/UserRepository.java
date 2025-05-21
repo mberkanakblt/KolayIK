@@ -14,6 +14,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByVerificationToken(String token);
     Optional<User> findByNameAndSurname(String name, String surname);
     Optional<User> findByEmail(String email);
+
+    Optional<User> findPersonnelById(Long userId);
+
+    boolean existsByEmail(String email);
     @Query(value = "SELECT new com.kolayik.view.VwManager(u.id,u.name,u.surname, u.email, u.status) " +
             "FROM User u WHERE u.id IN " +
             "(SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.COMPANY_ADMIN)")
