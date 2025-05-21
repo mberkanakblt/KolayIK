@@ -10,24 +10,20 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/kolayikdb
     username: postgres
-    password: 196969
+    password: root
   jpa:
     hibernate:
       ddl-auto: create
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
   mail:
-        host: smtp.gmail.com
-        port: 587
-        username: berkans.akbuluts@gmail.com
-        password: wlkschnzisueaaeb
-        properties:
-          mail:
-            smtp:
-              auth: true
-              starttls:
-                enable: true
+    host: smtp.gmail.com
+    port: 587
+    username: berkans.akbuluts@gmail.com
+    password: wlkschnzisueaaeb
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   jackson:
     time-zone: Europe/Istanbul
-

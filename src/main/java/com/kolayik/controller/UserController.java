@@ -1,4 +1,4 @@
-package com.kolayik.contoller;
+package com.kolayik.controller;
 
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.*;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.List;
 import java.util.Optional;
 
 import static com.kolayik.config.RestApis.USER;
@@ -32,6 +31,7 @@ import static com.kolayik.config.RestApis.*;
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
+
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;

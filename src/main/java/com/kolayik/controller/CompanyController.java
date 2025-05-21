@@ -5,7 +5,6 @@ import com.kolayik.dto.request.AddCompanyRequestDto;
 import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.entity.Company;
 import com.kolayik.service.CompanyService;
-import com.kolayik.service.UserService;
 import com.kolayik.view.VwCompany;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ import static com.kolayik.config.RestApis.*;
 public class CompanyController {
     private final CompanyService companyService;
     private final JwtManager jwtManager;
-    private final UserService userService;
+
 
     @PostMapping("/add-company")
     public ResponseEntity<BaseResponse<Boolean>> addCompany(@RequestBody AddCompanyRequestDto dto){

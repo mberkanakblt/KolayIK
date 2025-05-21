@@ -1,6 +1,6 @@
 package com.kolayik.dto.request;
 
-import com.kolayik.entity.UserRole;
+
 import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +16,6 @@ public record CreatePersonnelDto(
         String password,
         String avatar,
         Status status,
-        String companyName,
-        Role role
+        String companyName
 ) { }
 

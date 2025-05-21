@@ -19,16 +19,13 @@ import lombok.experimental.SuperBuilder;
 public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @Enumerated(EnumType.STRING)  // Enum string olarak DB'ye kaydolur
     @Column(nullable = false)
-    private Role roleName;
+    Role roleName;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
-    private User personnel;
+    Long userId;
 
 
 
