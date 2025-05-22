@@ -41,11 +41,11 @@ public class KolayIkSecurityConfig {
          */
         http.authorizeHttpRequests(req -> {
             req
-                    .requestMatchers("/dev/v1/user/reset-password/**","/dev/v1/user/forgot-password/**","/dev/v1/user/verify/**",
-                            "/dev/v1/comment/**","/dev/v1/user/login/**",
-                            "/swagger-ui/**","v3/api-docs/**",
+                    .requestMatchers("v3/api-docs/**","/dev/v1/user/**",
+                            "/dev/v1/comment/**",
+                            "/swagger-ui/**",
                             "/dev/v1/user/**","/dev/v1/membership/**"
-                    ,"/dev/v1/company/**",           "/dev/v1/user/**",
+                    ,"/dev/v1/company/**",
                             "/dev/v1/allow/**",
                             "/dev/v1/allowmanage/**" // belirli bir URL adresine erişimi yönet
 

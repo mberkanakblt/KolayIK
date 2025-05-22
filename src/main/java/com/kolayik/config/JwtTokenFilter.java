@@ -32,23 +32,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtUserDetails jwtUserDetails;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    // TODO: Test için açıldı, prod ortamında bu blok kaldırılacak!
-        String path = request.getRequestURI();
-
-    // PUBLIC endpoint'ler için token kontrolü yapmadan devam et
-        if (path.startsWith("/dev/v1/company/") ||
-                path.startsWith("/dev/v1/user/") ||
-                path.startsWith("/dev/v1/membership/") ||
-                path.startsWith("/swagger-ui/") ||
-                path.startsWith("/v3/api-docs/") ||
-                path.startsWith("/dev/v1/comment/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-
-
-
 
         final String requestHeaderAuthorization = request.getHeader("Authorization");
         System.out.println("header : "+requestHeaderAuthorization);

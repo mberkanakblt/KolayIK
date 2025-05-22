@@ -23,6 +23,9 @@ public class JwtUserDetails implements UserDetailsService {
     private final UserService userService;
     private final UserRoleService userRoleService;
 
+    /**
+     *Şeyma ekledi sorulacak?
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<com.kolayik.entity.User> user = userService.findByEmail(username);

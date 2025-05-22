@@ -228,6 +228,15 @@ public class UserController {
                     .build());
         }
     }
+    @PutMapping("/edit-personnel/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> editPersonnel(@RequestBody CreatePersonnelDto dto,Long userId){
+        userService.editPersonnel(dto,userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Success")
+                .data(true)
+                .build());
+    }
     @GetMapping("/get-vw-manager")
     public ResponseEntity<BaseResponse<List<VwManager>>> getVwManager(){
         return ResponseEntity.ok(BaseResponse.<List<VwManager>>builder()
