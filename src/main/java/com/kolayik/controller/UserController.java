@@ -7,6 +7,7 @@ import com.kolayik.entity.User;
 
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
+import com.kolayik.repository.UserRepository;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
 import com.kolayik.view.VwManager;
@@ -18,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.kolayik.dto.request.UpdatePersonnelDto;
+
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,7 @@ public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;
+    private final UserRepository userRepository;
 
     @PostMapping(DO_REGISTER)
     public ResponseEntity<BaseResponse<Boolean>> doRegister(@RequestBody @Valid DoRegisterRequestDto dto){
@@ -177,32 +181,6 @@ public class UserController {
 
     }
 
-    @PutMapping(UPDATE_PERSONNEL + "/{userId}")
-    public ResponseEntity<BaseResponse<Boolean>> updatePersonnel(
-            @PathVariable Long userId,
-            @RequestBody @Valid UpdatePersonnelDto updatePersonnelDto) {
-        try {
-            userService.updatePersonnel(userId, updatePersonnelDto);
-            return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                    .code(200)
-                    .message("Personnel updated successfully")
-                    .data(true)
-                    .build());
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.<Boolean>builder()
-                    .code(404)
-                    .data(false)
-                    .message(ex.getMessage())
-                    .build());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.<Boolean>builder()
-                    .code(500)
-                    .data(false)
-                    .message("An unexpected error occurred")
-                    .build());
-        }
-    }
-
     @PatchMapping(UPDATE_PERSONNEL_STATUS + "/{userId}")
     public ResponseEntity<BaseResponse<Boolean>> changePersonnelStatus(
             @PathVariable Long userId,
@@ -255,5 +233,31 @@ public class UserController {
                 .data(true)
                 .build());
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchPersonnel(@RequestParam String term) {
+        List<User> results = userService.searchPersonnel(term);
+        return ResponseEntity.ok(results);
+    }
+
+    @PatchMapping("/update-personnel-status/{id}")
+    public ResponseEntity<?> updatePersonnel(
+            @PathVariable Long id,
+            @RequestBody UpdatePersonnelDto updatePersonnelDto) {
+        try {
+            userService.updatePersonnel(id, updatePersonnelDto);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+
+
+
+
+
+
 
 }
