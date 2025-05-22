@@ -262,16 +262,5 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void editPersonnel(CreatePersonnelDto dto, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
 
-        user.setName(dto.name());
-        user.setSurname(dto.surname());
-        user.setPhone(dto.phone());
-        user.setEmail(dto.email());
-        user.setPassword(dto.password());
-        user.setAvatar(dto.avatar());
-        userRepository.save(user);
-    }
 }
