@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 
 
 public record CreatePersonnelDto(
-        @NotNull
         String name,
         String surname,
         String address,

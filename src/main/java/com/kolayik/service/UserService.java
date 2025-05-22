@@ -1,6 +1,5 @@
 package com.kolayik.service;
 
-import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.PasswordResetToken;
@@ -162,24 +161,7 @@ public class UserService {
         );
     }
 
-    /**
-     * Kullanıcının profil bilgilerini günceller.
-     */
-    public void updateProfile(Long userId, ProfileUpdateRequestDto dto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
 
-        user.setName(dto.getName());
-        user.setPhone(dto.getPhone());
-        user.setCompanyName(dto.getCompanyName());
-        user.setAddress(dto.getAddress());
-        user.setAvatar(dto.getAvatar());
-
-        userRepository.save(user);
-    }
-    /**
-     * Kullanıcı hesabını pasifleştirir.
-     */
     public void deactivate(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
@@ -234,33 +216,62 @@ public class UserService {
         }
         userRepository.deleteById(userId);
     }
-    public void updatePersonnel(Long userId, @Valid UpdatePersonnelDto updatePersonnelDto) {
-        User user = userRepository.findPersonnelById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
-        if (updatePersonnelDto.email() != null && !updatePersonnelDto.email().equals(user.getEmail())) {
-            boolean emailExists = userRepository.existsByEmail(updatePersonnelDto.email());
-            if (emailExists) {
-                throw new KolayIkException(ErrorType.EMAIL_SIFRE_HATASI);
-            }
-            user.setEmail(updatePersonnelDto.email());
-        }
-
-        if (updatePersonnelDto.name() != null) user.setName(updatePersonnelDto.name());
-        if (updatePersonnelDto.surname() != null) user.setSurname(updatePersonnelDto.surname());
-        if (updatePersonnelDto.phone() != null) user.setPhone(updatePersonnelDto.phone());
-        if (updatePersonnelDto.status() != null) user.setStatus(updatePersonnelDto.status());
-        if (updatePersonnelDto.avatar() != null) user.setAvatar(updatePersonnelDto.avatar());
-        if (updatePersonnelDto.companyName() != null) user.setCompanyName(updatePersonnelDto.companyName());
-
-        userRepository.save(user);
-
-    }
     public void changePersonnelStatus(Long userId, Status status) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         user.setStatus(status);
         userRepository.save(user);
+    }
+
+
+    public void updatePersonnel(Long id, UpdatePersonnelDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (dto.name() != null && !dto.name().isEmpty()) {
+            user.setName(dto.name());
+        }
+
+        if (dto.surname() != null && !dto.surname().isEmpty()) {
+            user.setSurname(dto.surname());
+        }
+
+        if (dto.address() != null && !dto.address().isEmpty()) {
+            user.setAddress(dto.address());
+        }
+
+        if (dto.phone() != null && !dto.phone().isEmpty()) {
+            user.setPhone(dto.phone());
+        }
+
+        if (dto.email() != null && !dto.email().isEmpty()) {
+            user.setEmail(dto.email());
+        }
+
+        if (dto.password() != null && !dto.password().isEmpty()) {
+            user.setPassword(dto.password());
+        }
+
+        if (dto.avatar() != null && !dto.avatar().isEmpty()) {
+            user.setAvatar(dto.avatar());
+        }
+
+        if (dto.status() != null) {
+            user.setStatus(dto.status());
+        }
+
+        if (dto.companyName() != null && !dto.companyName().isEmpty()) {
+            user.setCompanyName(dto.companyName());
+        }
+
+        userRepository.save(user);
+    }
+
+
+    public List<User> searchPersonnel(String term) {
+        String normalizedTerm = term.trim().toLowerCase();
+        return userRepository.searchByTerm(normalizedTerm);
     }
 
 

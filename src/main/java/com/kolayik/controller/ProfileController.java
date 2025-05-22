@@ -27,13 +27,7 @@ public class ProfileController {
     }
 
     // Profil bilgilerini günceller
-    @PutMapping
-    public ResponseEntity<Void> updateProfile(
-            @AuthenticationPrincipal User currentUser,
-            @RequestBody ProfileUpdateRequestDto dto) {
-        userService.updateProfile(currentUser.getId(), dto);
-        return ResponseEntity.noContent().build();
-    }
+
 
     // Hesabı pasifleştirir
     @PutMapping("/deactivate")
