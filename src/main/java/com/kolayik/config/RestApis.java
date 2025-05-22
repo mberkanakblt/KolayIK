@@ -10,13 +10,13 @@ public class RestApis {
     public static final String COMMENT = BASE_URL+"/comment";
     public static final String MEMBERSHIP = BASE_URL+"/membership";
     public static final String COMPANY = BASE_URL+"/company";
-
+    public static final String PROFILE = BASE_URL+"/profile";
 
 
     public static final String LOGIN = "/login";
     public static final String DO_REGISTER ="/doregister";
     public static final String ADD_COMMENT = "/add-comment";
     public static final String GET_COMMENT = "/get-comment";
-
+    public static final String GET_PROFILE = "/get-profile";
 
 }

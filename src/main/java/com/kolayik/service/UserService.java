@@ -151,15 +151,16 @@ public class UserService {
         public ProfileResponseDto getProfile(Long userId) {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-            return new ProfileResponseDto(
-                    user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getPhone(),
-                    user.getCompanyName(),
-                    user.getAddress(),
-                    user.getAvatar()
-            );
+            return ProfileResponseDto.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .surname(user.getSurname())
+                    .email(user.getEmail())
+                    .phone(user.getPhone())
+                    .companyName(user.getCompanyName())
+                    .address(user.getAddress())
+                    .avatar(user.getAvatar())
+                    .build();
         }
 
         /**
@@ -168,14 +169,16 @@ public class UserService {
         public void updateProfile(Long userId, ProfileUpdateRequestDto dto) {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-
-            user.setName(dto.getName());
-            user.setPhone(dto.getPhone());
-            user.setCompanyName(dto.getCompanyName());
-            user.setAddress(dto.getAddress());
-            user.setAvatar(dto.getAvatar());
+            user.setName(dto.name());
+            user.setSurname(dto.surname());
+            user.setEmail(dto.email());
+            user.setPhone(dto.phone());
+            user.setCompanyName(dto.companyName());
+            user.setAddress(dto.address());
+            user.setAvatar(dto.avatar());
 
             userRepository.save(user);
+
         }
         /**
          * Kullanıcı hesabını pasifleştirir.
@@ -190,7 +193,25 @@ public class UserService {
          * Kullanıcı hesabını kalıcı olarak siler.
          */
         public void deleteAccount(Long userId) {
+            if (!userRepository.existsById(userId)) {
+                throw new KolayIkException(ErrorType.USER_NOT_FOUND);
+            }
             userRepository.deleteById(userId);
         }
+
+    /**
+     * Kullanıcının şifresini günceller: önce mevcut şifre kontrol edilir, sonra yeni şifre kaydedilir.
+     */
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        // Mevcut şifre kontrolü
+        if (!user.getPassword().equals(currentPassword)) {
+            throw new KolayIkException(ErrorType.SIFREHATASI);
+        }
+        // Yeni şifreyi ata ve kaydet
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
     }
 
