@@ -1,6 +1,5 @@
 package com.kolayik.repository;
 
-import com.kolayik.entity.Company;
 import com.kolayik.entity.User;
 import com.kolayik.view.VwManager;
 import org.springframework.data.jpa.repository.JpaRepository;

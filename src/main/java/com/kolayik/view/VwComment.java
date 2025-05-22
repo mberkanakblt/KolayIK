@@ -14,5 +14,6 @@ public class VwComment {
     LocalDateTime commentDate;
     String avatar;
     String name;
+    String surname;
 
 }

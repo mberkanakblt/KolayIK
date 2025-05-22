@@ -1,5 +1,6 @@
 package com.kolayik.service;
 
+import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.PasswordResetToken;
