@@ -184,7 +184,7 @@ public class UserController {
             @RequestHeader(name = "Authorization", required = false) String authHeader,
             @RequestBody ChangePasswordRequestDto dto) {
         Long userId = extractUserIdFromHeader(authHeader);
-        userService.changePassword(userId, dto.getCurrentPassword(), dto.getNewPassword());
+        userService.changePassword(userId, dto.newPassword(), dto.currentPassword());
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
                 .message("Şifre değiştirildi.")
