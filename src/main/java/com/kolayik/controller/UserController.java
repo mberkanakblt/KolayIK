@@ -3,6 +3,7 @@ package com.kolayik.controller;
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.User;
 
 import com.kolayik.exception.ErrorType;
@@ -175,30 +176,6 @@ public class UserController {
                 .build());
     }
 
-    @DeleteMapping("/delete-profile")
-    public ResponseEntity<BaseResponse<Boolean>> deleteAccount(
-            @RequestHeader(name = "Authorization", required = false) String authHeader) {
-        Long userId = extractUserIdFromHeader(authHeader);
-        userService.deleteAccount(userId);
-        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                .code(200)
-                .message("Hesap silindi.")
-                .data(true)
-                .build());
-    }
-
-    @PutMapping("/change-password")
-    public ResponseEntity<BaseResponse<Boolean>> changePassword(
-            @RequestHeader(name = "Authorization", required = false) String authHeader,
-            @RequestBody ChangePasswordRequestDto dto) {
-        Long userId = extractUserIdFromHeader(authHeader);
-        userService.changePassword(userId, dto.newPassword(), dto.currentPassword());
-        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                .code(200)
-                .message("Şifre değiştirildi.")
-                .data(true)
-                .build());
-    }
 
     @GetMapping("/search")
     public ResponseEntity<List<User>> searchPersonnel(@RequestParam String term) {
@@ -206,7 +183,7 @@ public class UserController {
         return ResponseEntity.ok(results);
     }
 
-    @PutMapping("/update-personnel-status/{id}")
+    @PutMapping("/update-personnel-status/{id}/")
     public ResponseEntity<?> updatePersonnel(
             @PathVariable Long id,
             @RequestBody UpdatePersonnelDto updatePersonnelDto) {
@@ -220,13 +197,27 @@ public class UserController {
         }
     }
 
-    // Ortak JWT token parsing methodu
-    private Long extractUserIdFromHeader(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer "))
-            throw new KolayIkException(ErrorType.INVALID_TOKEN);
-        String token = authHeader.substring(7);
-        return jwtManager.validateToken(token)
-                .orElseThrow(() -> new KolayIkException(ErrorType.INVALID_TOKEN));
+    @GetMapping("/get-profile")
+    public ResponseEntity<BaseResponse<ProfileResponseDto>> getProfile(String token) {
+        Optional<Long> optionalUserId = jwtManager.validateToken(token);
+        ProfileResponseDto dto = userService.getProfile(optionalUserId.get());
+        return ResponseEntity.ok(BaseResponse.<ProfileResponseDto>builder()
+                .code(200)
+                .data(dto)
+                .message("Profil bilgisi getirildi.")
+                .build());
     }
+
+    @PutMapping("/edit-profile")
+    public ResponseEntity<BaseResponse<Boolean>> updateProfile(ProfileUpdateRequestDto dto) {
+        Optional<Long> optionalUserId = jwtManager.validateToken(dto.token());
+        userService.updateProfile(dto,optionalUserId.get());
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .data(true)
+                .message("Profil başarıyla güncellendi.")
+                .build());
+    }
+
 
 }

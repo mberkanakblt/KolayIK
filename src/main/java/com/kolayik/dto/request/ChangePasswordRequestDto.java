@@ -1,7 +1,12 @@
 package com.kolayik.dto.request;
 
-public record ChangePasswordRequestDto(
-        String newPassword,
-        String currentPassword
-) {
+import lombok.Data;
+
+/**
+ * Şifre değiştirme ekranından gelen mevcut ve yeni parolayı taşır.
+ */
+@Data
+public class ChangePasswordRequestDto {
+    private String currentPassword;
+    private String newPassword;
 }

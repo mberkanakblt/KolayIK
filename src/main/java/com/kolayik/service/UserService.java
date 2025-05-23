@@ -1,6 +1,7 @@
 package com.kolayik.service;
 
 import com.kolayik.dto.request.*;
+import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
 import com.kolayik.entity.UserRole;
@@ -145,38 +146,6 @@ public class UserService {
     }
 
 
-    /**
-     * Kullanıcının şifresini günceller: önce mevcut şifre kontrol edilir, sonra yeni şifre kaydedilir.
-     */
-    public void changePassword(Long userId, String currentPassword, String newPassword) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-        // Mevcut şifre kontrolü
-        if (!user.getPassword().equals(currentPassword)) {
-            throw new KolayIkException(ErrorType.SIFREHATASI);
-        }
-        // Yeni şifreyi ata ve kaydet
-        user.setPassword(newPassword);
-        userRepository.save(user);
-    }
-
-    public void deactivate(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-        user.setStatus(Status.PASIF);
-        userRepository.save(user);
-    }
-    /**
-     * Kullanıcı hesabını kalıcı olarak siler.
-     */
-    public void deleteAccount(Long userId) {
-        userRepository.deleteById(userId);
-    }
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-    }
-
 
     public List<User> getAllPersonnel() {
         return userRepository.findAll();
@@ -275,5 +244,82 @@ public class UserService {
 
     public List<VwPersonnel> getVwPersonnel() {
         return userRepository.getAllPersonnel();
+    }
+    /**
+     * Kullanıcının profil bilgilerini döner.
+     */
+    public ProfileResponseDto getProfile(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        return ProfileResponseDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .companyName(user.getCompanyName())
+                .address(user.getAddress())
+                .avatar(user.getAvatar())
+                .build();
+    }
+
+    /**
+     * Kullanıcının profil bilgilerini günceller.
+     */
+    public void updateProfile(ProfileUpdateRequestDto dto, Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("Kullanıcı bulunamadı.");
+        }
+        User user = optionalUser.get();
+        user.setName(dto.name());
+        user.setSurname(dto.surname());
+        user.setEmail(dto.email());
+        user.setPhone(dto.phone());
+        user.setCompanyName(dto.companyName());
+        user.setAddress(dto.address());
+        user.setAvatar(dto.avatar());
+
+        userRepository.save(user);
+
+    }
+    /**
+     * Kullanıcı hesabını pasifleştirir.
+     */
+    public void deactivate(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        user.setStatus(Status.PASIF);
+        userRepository.save(user);
+    }
+    /**
+     * Kullanıcı hesabını kalıcı olarak siler.
+     */
+    public void deleteAccount(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new KolayIkException(ErrorType.USER_NOT_FOUND);
+        }
+        userRepository.deleteById(userId);
+    }
+
+    /**
+     * Kullanıcının şifresini günceller: önce mevcut şifre kontrol edilir, sonra yeni şifre kaydedilir.
+     */
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        // Mevcut şifre kontrolü
+        if (!user.getPassword().equals(currentPassword)) {
+            throw new KolayIkException(ErrorType.SIFREHATASI);
+        }
+        // Yeni şifreyi ata ve kaydet
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
+
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
 }

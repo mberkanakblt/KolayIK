@@ -13,4 +13,3 @@ public record CreatePersonnelDto(
         Status status,
         String companyName
 ) { }
-
