@@ -27,22 +27,6 @@ public class AllowManageService {
 
     public void allowManageRegister(AllowManageRegisterRequestDto dto) {
 
-
-//       AllowManage allowmanage = AllowManage.builder()
-//               .allow_id(dto.allow_id())
-//               .user_id(dto.user_id())
-//               .name(dto.name())
-//               .surname(dto.surname())
-//               .allowstate(dto.allowstate())
-//               .allowstartdate(dto.allowstartdate())
-//               .allowfinishdate(dto.allowfinishdate())
-//               .approveddate(dto.approveddate())
-//               .rejecteddate(dto.rejecteddate())
-//               .allowtype(dto.allowtype())
-//                .build();
-
-
-//
         Optional<User> userOpt = userRepository.findByNameAndSurname(dto.name(), dto.surname());
         if (userOpt.isEmpty()) {
             throw new RuntimeException("Kullanıcı bulunamadı");
@@ -68,46 +52,6 @@ public class AllowManageService {
         allowmanage.setAllowstate(AllowState.BEKLEMEDE);
 
         allowManageRepository.save(allowmanage);
-
-
-//        Allow allow = new Allow();
-//        allow.setUser_id(dto.user_id());
-//        allow.setAllowstartdate(dto.allowstartdate());
-//        allow.setAllowfinishdate(dto.allowfinishdate());
-//        allow.setAllowtype(dto.allowtype());
-//        allow.setAllowstate(AllowState.BEKLEMEDE); // yeni izinler genelde beklemede başlar
-//        // diğer alanları set et
-//
-
-
-//        // 1. Kullanıcı var mı kontrol et
-//        Optional<User> userOpt = userRepository.findById(dto.user_id());
-//        if (userOpt.isEmpty()) {
-//            throw new KolayIkException(ErrorType.USER_NOT_FOUND);
-//        }
-//
-//        if (dto.allowstartdate().after(dto.allowfinishdate())) {
-//            throw new KolayIkException(ErrorType.INVALID_DATE_RANGE);
-//        }
-//
-//        // 3. Aynı tarih aralığında başka izin var mı kontrolü (isteğe bağlı)
-//        boolean hasOverlappingAllow = allowRepository.existsByUserIdAndDateRange(
-//                dto.user_id(), dto.allowstartdate(), dto.allowfinishdate());
-//        if (hasOverlappingAllow) {
-//            throw new KolayIkException(ErrorType.ALLOW_DATE_CONFLICT);
-//        }
-//
-//        // 4. İzin kaydet
-//        Allow allow = new Allow();
-//        allow.setUser_id(dto.user_id());
-//        allow.setAllowstartdate(dto.allowstartdate());
-//        allow.setAllowfinishdate(dto.allowfinishdate());
-//        allow.setAllowtype(dto.allowtype());
-//        allow.setAllowstate(AllowState.BEKLEMEDE); // yeni izinler genelde beklemede başlar
-//        // diğer alanları set et
-//
-//        allowRepository.save(allow);
-
 
     }
 
@@ -152,12 +96,5 @@ public class AllowManageService {
 
         return false;
     }
-
-        //Optional<User> userOpt = userRepository.findById(userId);
-        //userOpt.ifPresent(user -> {
-        //    String name = user.getName();
-        //    String surname = user.getSurname();
-        //});
-
 
 }
