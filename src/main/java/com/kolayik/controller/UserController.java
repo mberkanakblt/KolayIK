@@ -3,27 +3,22 @@ package com.kolayik.controller;
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.User;
 
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
-import com.kolayik.repository.UserRepository;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
 import com.kolayik.view.VwManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import com.kolayik.utility.enums.Status;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import com.kolayik.dto.request.UpdatePersonnelDto;
-
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.kolayik.config.RestApis.USER;
@@ -34,11 +29,9 @@ import static com.kolayik.config.RestApis.*;
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
-
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;
-    private final UserRepository userRepository;
 
     @PostMapping(DO_REGISTER)
     public ResponseEntity<BaseResponse<Boolean>> doRegister(@RequestBody @Valid DoRegisterRequestDto dto){
@@ -128,6 +121,14 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> findPersonnelById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
+
+    @GetMapping("/get-vw-manager")
+    public ResponseEntity<BaseResponse<List<VwManager>>> getVwManager() {
+        return ResponseEntity.ok(BaseResponse.<List<VwManager>>builder()
+                .code(200)
+                .message("Success")
+                .data(userService.getVwManager())
+                .build());
     }
 
     @PostMapping(CREATE_PERSONNEL)
@@ -138,9 +139,13 @@ public class UserController {
         System.out.println("Headers: " + headers);
         User user = userService.createPersonnel(createPersonnelDto);
         System.out.println("Created User: " + user);
+    @PutMapping("/approved/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> approvedUser(@PathVariable Long userId) {
+        userService.approved(userId);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
                 .message("Personnel created successfully")
+                .message("Success")
                 .data(true)
                 .build());
     }
@@ -179,6 +184,37 @@ public class UserController {
                     .build());
         }
 
+    @PutMapping("/reject/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> rejectManager(@PathVariable Long userId) {
+        userService.reject(userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Success")
+                .data(true)
+                .build());
+    }
+    // AŞAĞIDA PROFİL İŞLEMLERİ EKLENDİ
+
+
+     // Profil bilgilerini günceller.
+     private Long extractUserIdFromHeader(String authHeader) {
+         if (authHeader == null || !authHeader.startsWith("Bearer "))
+             throw new KolayIkException(ErrorType.INVALID_TOKEN);
+         String token = authHeader.substring(7);
+         return jwtManager.validateToken(token)
+                 .orElseThrow(() -> new KolayIkException(ErrorType.INVALID_TOKEN));
+     }
+
+    @GetMapping("/get-profile")
+    public ResponseEntity<BaseResponse<ProfileResponseDto>> getProfile(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        Long userId = extractUserIdFromHeader(authHeader);
+        ProfileResponseDto dto = userService.getProfile(userId);
+        return ResponseEntity.ok(BaseResponse.<ProfileResponseDto>builder()
+                .code(200)
+                .data(dto)
+                .message("Profil bilgisi getirildi.")
+                .build());
     }
 
     @PatchMapping(UPDATE_PERSONNEL_STATUS + "/{userId}")
@@ -213,24 +249,61 @@ public class UserController {
                         .message("Success")
                         .data(userService.getVwManager())
 
+    @PutMapping("/edit-profile")
+    public ResponseEntity<BaseResponse<Boolean>> updateProfile(
+            @RequestHeader(name = "Authorization", required = false) String authHeader,
+            @RequestBody ProfileUpdateRequestDto dto) {
+        Long userId = extractUserIdFromHeader(authHeader);
+        userService.updateProfile(userId, dto);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .data(true)
+                .message("Profil başarıyla güncellendi.")
+                .build());
+    }
+
+    @PutMapping("/deactivate")
+    public ResponseEntity<BaseResponse<Boolean>> deactivateAccount(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        Long userId = extractUserIdFromHeader(authHeader);
+        userService.deactivate(userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .data(true)
+                .message("Hesap pasifleştirildi.")
                 .build());
     }
     @PutMapping("/approved/{userId}")
     public ResponseEntity<BaseResponse<Boolean>> approvedUser(@PathVariable Long userId){
         userService.approved(userId);
+
+    @DeleteMapping("/delete-profile")
+    public ResponseEntity<BaseResponse<Boolean>> deleteAccount(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        Long userId = extractUserIdFromHeader(authHeader);
+        userService.deleteAccount(userId);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
                 .message("Success")
                 .data(true)
+                .message("Hesap silindi.")
                 .build());
     }
     @PutMapping("/reject/{userId}")
     public ResponseEntity<BaseResponse<Boolean>> rejectManager(@PathVariable Long userId){
         userService.reject(userId);
+
+    @PutMapping("/change-password")
+    public ResponseEntity<BaseResponse<Boolean>> changePassword(
+            @RequestHeader(name = "Authorization", required = false) String authHeader,
+            @RequestBody ChangePasswordRequestDto dto) {
+        Long userId = extractUserIdFromHeader(authHeader);
+        userService.changePassword(userId, dto.getCurrentPassword(), dto.getNewPassword());
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
                 .message("Success")
                 .data(true)
+                .message("Şifre değiştirildi.")
                 .build());
     }
     @GetMapping("/search")
@@ -259,5 +332,7 @@ public class UserController {
 
 
 
+
+}
 
 }
