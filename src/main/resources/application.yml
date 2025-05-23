@@ -10,7 +10,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/kolayikdb
     username: postgres
-    password: 196969
+    password: root
   jpa:
     hibernate:
       ddl-auto: create

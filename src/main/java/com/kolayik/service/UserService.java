@@ -1,8 +1,6 @@
 package com.kolayik.service;
 
-import com.kolayik.dto.request.DoLoginRequestDto;
-import com.kolayik.dto.request.DoRegisterRequestDto;
-import com.kolayik.dto.request.ProfileUpdateRequestDto;
+import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
@@ -15,8 +13,9 @@ import com.kolayik.repository.UserRoleRepository;
 import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 import com.kolayik.view.VwManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +26,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
@@ -102,7 +102,7 @@ public class UserService {
 
     }
 
-    private Optional<User> findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -143,28 +143,8 @@ public class UserService {
         user.setStatus(Status.AKTIF);
         userRepository.save(user);
     }
-// AŞAĞIDA PROFİL İŞLEMLERİ EKLENDİ
 
-        /**
-         * Kullanıcının profil bilgilerini döner.
-         */
-        public ProfileResponseDto getProfile(Long userId) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-            return ProfileResponseDto.builder()
-                    .id(user.getId())
-                    .name(user.getName())
-                    .surname(user.getSurname())
-                    .email(user.getEmail())
-                    .phone(user.getPhone())
-                    .companyName(user.getCompanyName())
-                    .address(user.getAddress())
-                    .avatar(user.getAvatar())
-                    .build();
-        }
-    /**
-     * Kullanıcının profil bilgilerini döner.
-     */
+
     public ProfileResponseDto getProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
@@ -178,42 +158,6 @@ public class UserService {
                 user.getAvatar()
         );
     }
-
-        /**
-         * Kullanıcının profil bilgilerini günceller.
-         */
-        public void updateProfile(Long userId, ProfileUpdateRequestDto dto) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-            user.setName(dto.name());
-            user.setSurname(dto.surname());
-            user.setEmail(dto.email());
-            user.setPhone(dto.phone());
-            user.setCompanyName(dto.companyName());
-            user.setAddress(dto.address());
-            user.setAvatar(dto.avatar());
-
-            userRepository.save(user);
-
-        }
-        /**
-         * Kullanıcı hesabını pasifleştirir.
-         */
-        public void deactivate(Long userId) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-            user.setStatus(Status.PASIF);
-            userRepository.save(user);
-        }
-        /**
-         * Kullanıcı hesabını kalıcı olarak siler.
-         */
-        public void deleteAccount(Long userId) {
-            if (!userRepository.existsById(userId)) {
-                throw new KolayIkException(ErrorType.USER_NOT_FOUND);
-            }
-            userRepository.deleteById(userId);
-        }
 
     /**
      * Kullanıcının şifresini günceller: önce mevcut şifre kontrol edilir, sonra yeni şifre kaydedilir.
