@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -198,26 +199,40 @@ public class UserController {
     }
 
     @GetMapping("/get-profile")
-    public ResponseEntity<BaseResponse<ProfileResponseDto>> getProfile(String token) {
-        Optional<Long> optionalUserId = jwtManager.validateToken(token);
-        ProfileResponseDto dto = userService.getProfile(optionalUserId.get());
-        return ResponseEntity.ok(BaseResponse.<ProfileResponseDto>builder()
-                .code(200)
-                .data(dto)
-                .message("Profil bilgisi getirildi.")
-                .build());
+    public ResponseEntity<BaseResponse<ProfileResponseDto>> getProfile(
+            @RequestParam("token") String token
+    ) {
+        Long userId = jwtManager.validateToken(token)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Geçersiz token"
+                ));
+
+        ProfileResponseDto dto = userService.getProfile(userId);
+        return ResponseEntity.ok(
+                BaseResponse.<ProfileResponseDto>builder()
+                        .code(200)
+                        .data(dto)
+                        .message("Profil bilgisi getirildi.")
+                        .build()
+        );
     }
 
     @PutMapping("/edit-profile")
-    public ResponseEntity<BaseResponse<Boolean>> updateProfile(ProfileUpdateRequestDto dto) {
-        Optional<Long> optionalUserId = jwtManager.validateToken(dto.token());
-        userService.updateProfile(dto,optionalUserId.get());
-        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                .code(200)
-                .data(true)
-                .message("Profil başarıyla güncellendi.")
-                .build());
+    public ResponseEntity<BaseResponse<Boolean>> updateProfile(
+            @RequestBody ProfileUpdateRequestDto dto
+    ) {
+        Long userId = jwtManager.validateToken(dto.token())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Geçersiz token"
+                ));
+
+        userService.updateProfile(dto, userId);
+        return ResponseEntity.ok(
+                BaseResponse.<Boolean>builder()
+                        .code(200)
+                        .data(true)
+                        .message("Profil başarıyla güncellendi.")
+                        .build()
+        );
     }
-
-
 }
