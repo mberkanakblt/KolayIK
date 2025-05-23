@@ -26,6 +26,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
@@ -101,25 +102,25 @@ public class UserService {
 
     }
 
-    public Optional<User> findByEmail(String email) {
+    private Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
 
     public void resetPassword(String token, String newPassword) {
-        Optional<PasswordResetToken> resetTokenOpt = passwordResetTokenRepository.findByToken(token);
+            Optional<PasswordResetToken> resetTokenOpt = passwordResetTokenRepository.findByToken(token);
 
-        if (resetTokenOpt.isEmpty() || resetTokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
-            throw new KolayIkException(ErrorType.INVALID_TOKEN);
-        }
+            if (resetTokenOpt.isEmpty() || resetTokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
+                throw new KolayIkException(ErrorType.INVALID_TOKEN);
+            }
 
-        PasswordResetToken resetToken = resetTokenOpt.get();
-        User user = resetToken.getUser();
+            PasswordResetToken resetToken = resetTokenOpt.get();
+            User user = resetToken.getUser();
 
-        user.setPassword(newPassword);
-        userRepository.save(user);
+            user.setPassword(newPassword);
+            userRepository.save(user);
 
-        passwordResetTokenRepository.delete(resetToken); // Token kullanıldıktan sonra silinir.
+            passwordResetTokenRepository.delete(resetToken); // Token kullanıldıktan sonra silinir.
 
     }
 
@@ -142,11 +143,8 @@ public class UserService {
         user.setStatus(Status.AKTIF);
         userRepository.save(user);
     }
-// AŞAĞIDA PROFİL İŞLEMLERİ EKLENDİ
 
-    /**
-     * Kullanıcının profil bilgilerini döner.
-     */
+
     public ProfileResponseDto getProfile(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
@@ -161,6 +159,20 @@ public class UserService {
         );
     }
 
+    /**
+     * Kullanıcının şifresini günceller: önce mevcut şifre kontrol edilir, sonra yeni şifre kaydedilir.
+     */
+    public void changePassword(Long userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        // Mevcut şifre kontrolü
+        if (!user.getPassword().equals(currentPassword)) {
+            throw new KolayIkException(ErrorType.SIFREHATASI);
+        }
+        // Yeni şifreyi ata ve kaydet
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
 
     public void deactivate(Long userId) {
         User user = userRepository.findById(userId)

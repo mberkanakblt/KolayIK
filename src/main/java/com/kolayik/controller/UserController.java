@@ -7,20 +7,16 @@ import com.kolayik.entity.User;
 
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
-import com.kolayik.repository.UserRepository;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
 import com.kolayik.view.VwManager;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import com.kolayik.utility.enums.Status;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import com.kolayik.dto.request.UpdatePersonnelDto;
 
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -34,11 +30,9 @@ import static com.kolayik.config.RestApis.*;
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
-
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;
-    private final UserRepository userRepository;
 
     @PostMapping(DO_REGISTER)
     public ResponseEntity<BaseResponse<Boolean>> doRegister(@RequestBody @Valid DoRegisterRequestDto dto){
@@ -129,6 +123,14 @@ public class UserController {
     public ResponseEntity<User> findPersonnelById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
+    @GetMapping("/get-vw-manager")
+    public ResponseEntity<BaseResponse<List<VwManager>>> getVwManager() {
+        return ResponseEntity.ok(BaseResponse.<List<VwManager>>builder()
+                .code(200)
+                .message("Success")
+                .data(userService.getVwManager())
+                .build());
+    }
 
     @PostMapping(CREATE_PERSONNEL)
     public ResponseEntity<BaseResponse<Boolean>> createPersonnel(
@@ -145,94 +147,51 @@ public class UserController {
                 .build());
     }
 
-    @GetMapping(GET_ALL_PERSONNEL)
-    public ResponseEntity<BaseResponse<List<User>>> getAllPersonnel() {
-        List<User> personnelList = userService.getAllPersonnel();
-        return ResponseEntity.ok(BaseResponse.<List<User>>builder()
-                .code(200)
-                .message("Personnel list fetched successfully")
-                .data(personnelList)
-                .build());
-    }
-
-
-    @DeleteMapping(DELETE_PERSONNEL + "/{userId}")
-    public ResponseEntity<BaseResponse<Boolean>> deletePersonnelByUserId(@PathVariable Long userId) {
-        try {
-            userService.deletePersonnelByUserId(userId);
-            return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                    .code(200)
-                    .data(true)
-                    .message("Personnel associated with user successfully deleted")
-                    .build());
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.<Boolean>builder()
-                    .code(404)
-                    .data(false)
-                    .message(ex.getMessage())
-                    .build());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.<Boolean>builder()
-                    .code(500)
-                    .data(false)
-                    .message("An unexpected error occurred")
-                    .build());
-        }
-
-    }
-
-    @PatchMapping(UPDATE_PERSONNEL_STATUS + "/{userId}")
-    public ResponseEntity<BaseResponse<Boolean>> changePersonnelStatus(
-            @PathVariable Long userId,
-            @RequestParam Status status) {
-        try {
-            userService.changePersonnelStatus(userId, status);
-            return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                    .code(200)
-                    .message("Personnel status updated successfully")
-                    .data(true)
-                    .build());
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.<Boolean>builder()
-                    .code(404)
-                    .data(false)
-                    .message(ex.getMessage())
-                    .build());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseResponse.<Boolean>builder()
-                    .code(500)
-                    .data(false)
-                    .message("An unexpected error occurred")
-                    .build());
-        }
-    }
-    @GetMapping("/get-vw-manager")
-    public ResponseEntity<BaseResponse<List<VwManager>>> getVwManager(){
-        return ResponseEntity.ok(BaseResponse.<List<VwManager>>builder()
-                        .code(200)
-                        .message("Success")
-                        .data(userService.getVwManager())
-
-                .build());
-    }
     @PutMapping("/approved/{userId}")
-    public ResponseEntity<BaseResponse<Boolean>> approvedUser(@PathVariable Long userId){
+    public ResponseEntity<BaseResponse<Boolean>> approvedUser(@PathVariable Long userId) {
         userService.approved(userId);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
-                .message("Success")
+                .message("Personnel approved successfully")
                 .data(true)
                 .build());
     }
+
     @PutMapping("/reject/{userId}")
-    public ResponseEntity<BaseResponse<Boolean>> rejectManager(@PathVariable Long userId){
+    public ResponseEntity<BaseResponse<Boolean>> rejectManager(@PathVariable Long userId) {
         userService.reject(userId);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
-                .message("Success")
+                .message("Manager rejected successfully")
                 .data(true)
                 .build());
     }
+
+    @DeleteMapping("/delete-profile")
+    public ResponseEntity<BaseResponse<Boolean>> deleteAccount(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
+        Long userId = extractUserIdFromHeader(authHeader);
+        userService.deleteAccount(userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Hesap silindi.")
+                .data(true)
+                .build());
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<BaseResponse<Boolean>> changePassword(
+            @RequestHeader(name = "Authorization", required = false) String authHeader,
+            @RequestBody ChangePasswordRequestDto dto) {
+        Long userId = extractUserIdFromHeader(authHeader);
+        userService.changePassword(userId, dto.getCurrentPassword(), dto.getNewPassword());
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Şifre değiştirildi.")
+                .data(true)
+                .build());
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<User>> searchPersonnel(@RequestParam String term) {
         List<User> results = userService.searchPersonnel(term);
@@ -253,11 +212,13 @@ public class UserController {
         }
     }
 
-
-
-
-
-
-
+    // Ortak JWT token parsing methodu
+    private Long extractUserIdFromHeader(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer "))
+            throw new KolayIkException(ErrorType.INVALID_TOKEN);
+        String token = authHeader.substring(7);
+        return jwtManager.validateToken(token)
+                .orElseThrow(() -> new KolayIkException(ErrorType.INVALID_TOKEN));
+    }
 
 }
