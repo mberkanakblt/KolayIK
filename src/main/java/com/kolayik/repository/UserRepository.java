@@ -2,6 +2,7 @@ package com.kolayik.repository;
 
 import com.kolayik.entity.User;
 import com.kolayik.view.VwManager;
+import com.kolayik.view.VwPersonnel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +19,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query(value = "SELECT * FROM vw_manager", nativeQuery = true)
+    @Query(value = "SELECT new com.kolayik.view.VwManager(u.id,u.name,u.surname, u.email, u.status) " +
+            "FROM User u WHERE u.id IN " +
+            "(SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.COMPANY_ADMIN)")
     List<VwManager> getAllManager();
 
 
@@ -30,4 +33,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "LOWER(u.email) LIKE LOWER(CONCAT('%', :term, '%'))")
     List<User> searchByTerm(@Param("term") String term);
 
+    @Query("SELECT new com.kolayik.view.VwPersonnel(u.id, u.name, u.surname, u.email, u.status, u.companyName) " +
+            "FROM User u WHERE u.id IN (" +
+            "SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.PERSONNEL)")
+    List<VwPersonnel> getAllPersonnel();
 }

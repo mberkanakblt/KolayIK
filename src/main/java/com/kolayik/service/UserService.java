@@ -1,7 +1,6 @@
 package com.kolayik.service;
 
 import com.kolayik.dto.request.*;
-import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
 import com.kolayik.entity.UserRole;
@@ -13,6 +12,7 @@ import com.kolayik.repository.UserRoleRepository;
 import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 import com.kolayik.view.VwManager;
+import com.kolayik.view.VwPersonnel;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -273,4 +273,7 @@ public class UserService {
     }
 
 
+    public List<VwPersonnel> getVwPersonnel() {
+        return userRepository.getAllPersonnel();
+    }
 }

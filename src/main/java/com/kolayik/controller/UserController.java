@@ -10,6 +10,7 @@ import com.kolayik.exception.KolayIkException;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
 import com.kolayik.view.VwManager;
+import com.kolayik.view.VwPersonnel;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -119,7 +120,7 @@ public class UserController {
                 .data("Verified")
                 .build());
     }
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity<User> findPersonnelById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
@@ -131,7 +132,14 @@ public class UserController {
                 .data(userService.getVwManager())
                 .build());
     }
-
+    @GetMapping("/get-vw-personnel")
+    public ResponseEntity<BaseResponse<List<VwPersonnel>>> getVwPersonnel() {
+        return ResponseEntity.ok(BaseResponse.<List<VwPersonnel>>builder()
+                .code(200)
+                .message("Success")
+                .data(userService.getVwPersonnel())
+                .build());
+    }
     @PostMapping(CREATE_PERSONNEL)
     public ResponseEntity<BaseResponse<Boolean>> createPersonnel(
             @RequestHeader Map<String, String> headers,
@@ -198,7 +206,7 @@ public class UserController {
         return ResponseEntity.ok(results);
     }
 
-    @PatchMapping("/update-personnel-status/{id}")
+    @PutMapping("/update-personnel-status/{id}")
     public ResponseEntity<?> updatePersonnel(
             @PathVariable Long id,
             @RequestBody UpdatePersonnelDto updatePersonnelDto) {

@@ -44,7 +44,7 @@ public class KolayIkSecurityConfig {
                     .requestMatchers("v3/api-docs/**","/dev/v1/user/**",
                             "/dev/v1/comment/**",
                             "/swagger-ui/**",
-                            "/dev/v1/user/**","/dev/v1/membership/**"
+                            "/dev/v1/membership/**"
                     ,"/dev/v1/company/**",
                             "/dev/v1/allow/**",
                             "/dev/v1/allowmanage/**" // belirli bir URL adresine erişimi yönet
