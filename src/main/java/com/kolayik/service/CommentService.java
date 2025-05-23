@@ -23,7 +23,6 @@ public class CommentService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-
         Comment comment = Comment.builder()
                 .description(description)
                 .user(user)

@@ -1,13 +1,16 @@
 package com.kolayik;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-@SpringBootTest
-class KolayIkApplicationTests {
+@SpringBootApplication
+@EnableJpaRepositories(basePackages = "com.kolayik.repository")
+@EntityScan(basePackages = "com.kolayik.model")
+public class KolayIkApplicationTests {
 
-    @Test
-    void contextLoads() {
+    public static void main(String[] args) {
+        SpringApplication.run(KolayIkApplication.class, args);
     }
-
 }

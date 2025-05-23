@@ -1,5 +1,6 @@
 package com.kolayik.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.kolayik.utility.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,8 +33,9 @@ public class User {
     Boolean emailVerified;
     @Column(name = "verification_token")
     String verificationToken;
-
-
+    @OneToOne(mappedBy = "user")
+    @JsonBackReference
+    Company company;
 
 
 }

@@ -1,19 +1,16 @@
 package com.kolayik.view;
 
-
+import com.kolayik.utility.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
-
 @Getter
 @AllArgsConstructor
-public class VwComment {
-    String description;
-    LocalDateTime commentDate;
-    String companyName;
+public class VwPersonnel {
+    Long userId;
     String name;
     String surname;
-
+    String email;
+    Status status;
+    String companyName;
 }

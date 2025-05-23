@@ -1,27 +1,20 @@
-package com.kolayik.contoller;
+package com.kolayik.controller;
 import com.kolayik.dto.request.AllowManageRegisterRequestDto;
 import com.kolayik.dto.request.AllowStateUpdateRequestDto;
 import com.kolayik.dto.response.BaseResponse;
-import com.kolayik.entity.AllowManage;
-import com.kolayik.exception.ErrorType;
-import com.kolayik.exception.KolayIkException;
 import com.kolayik.repository.AllowManageRepository;
 import com.kolayik.service.AllowManageService;
-import com.kolayik.utility.enums.AllowState;
 import com.kolayik.view.VwAllowManage;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.kolayik.config.RestApis.*;
-import static org.springframework.http.HttpHeaders.ALLOW;
+
 
 @RestController
 @RequiredArgsConstructor

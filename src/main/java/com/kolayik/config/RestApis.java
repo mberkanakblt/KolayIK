@@ -8,13 +8,23 @@ public class RestApis {
 
     public static final String USER = BASE_URL+"/user";
     public static final String COMMENT = BASE_URL+"/comment";
+    public static final String MEMBERSHIP = BASE_URL+"/membership";
+    public static final String COMPANY = BASE_URL+"/company";
 
 
 
-    public static final String LOGIN =BASE_URL+ "/login";
+
+    public static final String LOGIN = "/login";
     public static final String DO_REGISTER ="/doregister";
     public static final String ADD_COMMENT = "/add-comment";
     public static final String GET_COMMENT = "/get-comment";
+
+    public static final String CREATE_PERSONNEL = "/create-personnel";
+    public static final String UPDATE_PERSONNEL = "/update-personnel";
+    public static final String DELETE_PERSONNEL = "/delete-personnel";
+    public static final String GET_ALL_PERSONNEL = "/get-all-personnel";
+    public static final String UPDATE_PERSONNEL_STATUS = "/update-personnel-status";
+
 
     public static final String ALLOW = BASE_URL+"/allow";
 
@@ -31,5 +41,8 @@ public class RestApis {
     public static final String GET_REQUEST_ALLOW_MANAGE ="/get-request-allow-manage";
     public static final String GET_ALLOW_MANAGE_LIST ="/get-allow-manage-list";
     public static final String ALLOW_MANAGE_APROVE ="/aprove";
+
+
+
 
 }

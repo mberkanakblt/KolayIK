@@ -1,8 +1,11 @@
 package com.kolayik.service;
 
+import com.kolayik.entity.User;
 import com.kolayik.entity.UserRole;
+import com.kolayik.repository.UserRepository;
 import com.kolayik.repository.UserRoleRepository;
 import com.kolayik.utility.enums.Role;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserRoleService {
     private final UserRoleRepository userRoleRepository;
+    private final UserRepository userRepository;
 
     public List<UserRole> findAllRole(Long userId){
         return userRoleRepository.findByUserId(userId);
@@ -24,6 +28,8 @@ public class UserRoleService {
                 .userId(userId)
                 .build());
     }
-
-
 }
+
+
+
+

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    @Query("SELECT new com.kolayik.view.VwComment(c.description, c.commentDate, u.avatar, u.name) " +
+    @Query("SELECT new com.kolayik.view.VwComment(c.description, c.commentDate, u.companyName, u.name,u.surname) " +
             "FROM Comment c JOIN c.user u")
     List<VwComment> getAllComment();
 

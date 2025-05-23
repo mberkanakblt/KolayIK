@@ -19,30 +19,56 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class JwtUserDetails implements UserDetailsService {
+
     private final UserService userService;
     private final UserRoleService userRoleService;
+
+    /**
+     *Şeyma ekledi sorulacak?
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
+        Optional<com.kolayik.entity.User> user = userService.findByEmail(username);
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with email: " + username);
+        }
 
-    public UserDetails loadUserById(Long userId) {
-        // 1. adım bu id ye sahip bir kullanıcı var mı?
-        Optional<com.kolayik.entity.User> user = userService.findByUserId(userId);
-        if(user.isEmpty()) return null;
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        // user role servisinden userId si,ne ait rollerin listesini çelkiyoruz.
-        List<UserRole> roleLists = userRoleService.findAllRole(userId);
-        // bu rol listesini GrantedAuthority içerisine ekliyoruz.
-        roleLists.forEach(r->{
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"+r.getRoleName()));
+        List<UserRole> roles = userRoleService.findAllRole(user.get().getId());
+        roles.forEach(role -> {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName().name()));
         });
 
         return User.builder()
                 .username(user.get().getEmail())
                 .password(user.get().getPassword())
-                .accountLocked(false)
                 .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
+                .authorities(grantedAuthorities)
+                .build();
+    }
+
+    public UserDetails loadUserById(Long userId) {
+        Optional<com.kolayik.entity.User> user = userService.findByUserId(userId);
+        if (user.isEmpty()) {
+            return null;
+        }
+
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        List<UserRole> roleLists = userRoleService.findAllRole(userId);
+        roleLists.forEach(r -> {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + r.getRoleName().name()));
+        });
+
+        return User.builder()
+                .username(user.get().getEmail())
+                .password(user.get().getPassword())
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
                 .authorities(grantedAuthorities)
                 .build();
     }

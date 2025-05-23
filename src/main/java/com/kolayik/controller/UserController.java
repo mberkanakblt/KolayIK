@@ -1,22 +1,27 @@
-package com.kolayik.contoller;
+package com.kolayik.controller;
 
 import com.kolayik.config.JwtManager;
-import com.kolayik.dto.request.AddRoleRequestDto;
-import com.kolayik.dto.request.DoLoginRequestDto;
-import com.kolayik.dto.request.DoRegisterRequestDto;
-import com.kolayik.dto.request.ResetPasswordRequest;
+import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.entity.User;
 
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
+import com.kolayik.view.VwManager;
+import com.kolayik.view.VwPersonnel;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.kolayik.config.RestApis.USER;
@@ -25,6 +30,7 @@ import static com.kolayik.config.RestApis.*;
 @RequiredArgsConstructor
 @RequestMapping(USER)
 @CrossOrigin("*")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
@@ -115,4 +121,103 @@ public class UserController {
                 .data("Verified")
                 .build());
     }
+    @GetMapping("/get-by-id/{id}")
+    public ResponseEntity<User> findPersonnelById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+    @GetMapping("/get-vw-manager")
+    public ResponseEntity<BaseResponse<List<VwManager>>> getVwManager() {
+        return ResponseEntity.ok(BaseResponse.<List<VwManager>>builder()
+                .code(200)
+                .message("Success")
+                .data(userService.getVwManager())
+                .build());
+    }
+    @GetMapping("/get-vw-personnel")
+    public ResponseEntity<BaseResponse<List<VwPersonnel>>> getVwPersonnel() {
+        return ResponseEntity.ok(BaseResponse.<List<VwPersonnel>>builder()
+                .code(200)
+                .message("Success")
+                .data(userService.getVwPersonnel())
+                .build());
+    }
+    @PostMapping(CREATE_PERSONNEL)
+    public ResponseEntity<BaseResponse<Boolean>> createPersonnel(
+            @RequestHeader Map<String, String> headers,
+            @RequestBody @Valid CreatePersonnelDto createPersonnelDto) {
+
+        System.out.println("Headers: " + headers);
+        User user = userService.createPersonnel(createPersonnelDto);
+        System.out.println("Created User: " + user);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Personnel created successfully")
+                .data(true)
+                .build());
+    }
+
+    @PutMapping("/approved/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> approvedUser(@PathVariable Long userId) {
+        userService.approved(userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Personnel approved successfully")
+                .data(true)
+                .build());
+    }
+
+    @PutMapping("/reject/{userId}")
+    public ResponseEntity<BaseResponse<Boolean>> rejectManager(@PathVariable Long userId) {
+        userService.reject(userId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Manager rejected successfully")
+                .data(true)
+                .build());
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchPersonnel(@RequestParam String term) {
+        List<User> results = userService.searchPersonnel(term);
+        return ResponseEntity.ok(results);
+    }
+
+    @PutMapping("/update-personnel-status/{id}/")
+    public ResponseEntity<?> updatePersonnel(
+            @PathVariable Long id,
+            @RequestBody UpdatePersonnelDto updatePersonnelDto) {
+        try {
+            userService.updatePersonnel(id, updatePersonnelDto);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/get-profile")
+    public ResponseEntity<BaseResponse<ProfileResponseDto>> getProfile(String token) {
+        Optional<Long> optionalUserId = jwtManager.validateToken(token);
+        ProfileResponseDto dto = userService.getProfile(optionalUserId.get());
+        return ResponseEntity.ok(BaseResponse.<ProfileResponseDto>builder()
+                .code(200)
+                .data(dto)
+                .message("Profil bilgisi getirildi.")
+                .build());
+    }
+
+    @PutMapping("/edit-profile")
+    public ResponseEntity<BaseResponse<Boolean>> updateProfile(ProfileUpdateRequestDto dto) {
+        Optional<Long> optionalUserId = jwtManager.validateToken(dto.token());
+        userService.updateProfile(dto,optionalUserId.get());
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .data(true)
+                .message("Profil başarıyla güncellendi.")
+                .build());
+    }
+
+
 }
