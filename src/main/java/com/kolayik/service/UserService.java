@@ -108,19 +108,19 @@ public class UserService {
 
 
     public void resetPassword(String token, String newPassword) {
-            Optional<PasswordResetToken> resetTokenOpt = passwordResetTokenRepository.findByToken(token);
+        Optional<PasswordResetToken> resetTokenOpt = passwordResetTokenRepository.findByToken(token);
 
-            if (resetTokenOpt.isEmpty() || resetTokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
-                throw new KolayIkException(ErrorType.INVALID_TOKEN);
-            }
+        if (resetTokenOpt.isEmpty() || resetTokenOpt.get().getExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new KolayIkException(ErrorType.INVALID_TOKEN);
+        }
 
-            PasswordResetToken resetToken = resetTokenOpt.get();
-            User user = resetToken.getUser();
+        PasswordResetToken resetToken = resetTokenOpt.get();
+        User user = resetToken.getUser();
 
-            user.setPassword(newPassword);
-            userRepository.save(user);
+        user.setPassword(newPassword);
+        userRepository.save(user);
 
-            passwordResetTokenRepository.delete(resetToken); // Token kullanıldıktan sonra silinir.
+        passwordResetTokenRepository.delete(resetToken); // Token kullanıldıktan sonra silinir.
 
     }
 
@@ -144,20 +144,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-
-    public ProfileResponseDto getProfile(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-        return new ProfileResponseDto(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getCompanyName(),
-                user.getAddress(),
-                user.getAvatar()
-        );
-    }
 
     /**
      * Kullanıcının şifresini günceller: önce mevcut şifre kontrol edilir, sonra yeni şifre kaydedilir.
