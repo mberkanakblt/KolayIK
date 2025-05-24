@@ -1,5 +1,6 @@
 package com.kolayik.repository;
 
+import com.kolayik.entity.Allow;
 import com.kolayik.entity.AllowManage;
 
 import com.kolayik.entity.User;
@@ -15,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AllowManageRepository extends JpaRepository<AllowManage, Long> {
+
+//    Optional<User> findByVerificationToken(String token);
+    Optional<Allow> findByAllowtype(String allowtype);
 
 
     Optional<User> findOptionalByNameAndSurname(String name, String surname);
@@ -42,20 +46,6 @@ public interface AllowManageRepository extends JpaRepository<AllowManage, Long> 
     List<VwAllowManage> getAllPendingAllows();
 
 
-//    @Transactional
-//    @Modifying
-//    @Query("UPDATE AllowManage a SET a.allowstate = :state WHERE a.allow_id = :id")
-//    int updateAllowState(@Param("id") Long id, @Param("state") AllowState state);
 
-
-//
-//    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END FROM Allow a " +
-//            "WHERE a.userId = :userId " +
-//            "AND (:startDate BETWEEN a.allowStartDate AND a.allowFinishDate " +
-//            "OR :finishDate BETWEEN a.allowStartDate AND a.allowFinishDate " +
-//            "OR a.allowStartDate BETWEEN :startDate AND :finishDate)")
-//    boolean existsByUserIdAndDateRange(@Param("userId") Long userId,
-//                                       @Param("startDate") Date startDate,
-//                                       @Param("finishDate") Date finishDate);
 }
 
