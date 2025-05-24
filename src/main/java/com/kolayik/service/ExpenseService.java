@@ -73,12 +73,12 @@ public class ExpenseService {
         expenseRepository.save(expense);
     }
 
-    public void getMyExpense(Long userId) {
+    public List<Expense> getMyExpense(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("Kullanıcı bulunamadı.");
         }
-       expenseRepository.findAllByUserId(userId);
+       return expenseRepository.findAllByUserId(userId);
 
     }
 }
