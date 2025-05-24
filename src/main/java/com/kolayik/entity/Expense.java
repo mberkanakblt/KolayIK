@@ -1,10 +1,13 @@
 package com.kolayik.entity;
 
+import com.kolayik.utility.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,4 +22,10 @@ public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    Double amount;
+    String description;
+    String fileUrl;
+    LocalDateTime date;
+    Status status;
+    Long userId;
 }

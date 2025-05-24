@@ -10,6 +10,7 @@ public class RestApis {
     public static final String COMMENT = BASE_URL+"/comment";
     public static final String MEMBERSHIP = BASE_URL+"/membership";
     public static final String COMPANY = BASE_URL+"/company";
+    public static final String EXPENSE = BASE_URL+"/expense";
 
 
 

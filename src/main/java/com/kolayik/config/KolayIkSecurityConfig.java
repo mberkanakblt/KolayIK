@@ -43,11 +43,12 @@ public class KolayIkSecurityConfig {
             req
                     .requestMatchers("v3/api-docs/**","/dev/v1/user/**",
                             "/dev/v1/comment/**",
-                            "/swagger-ui/**",
+                            "/swagger-ui/**","/dev/v1/expense/**","/api/files/upload",
                             "/dev/v1/membership/**"
                     ,"/dev/v1/company/**",
                             "/dev/v1/allow/**",
-                            "/dev/v1/allowmanage/**" // belirli bir URL adresine erişimi yönet
+                            "/dev/v1/allowmanage/**",
+                            "/uploads/**" // belirli bir URL adresine erişimi yönet
 
                     ) // belirli bir URL adresine erişimi yönet
                     .permitAll() // yukarıdaki adrese ve adreslere izin ver.

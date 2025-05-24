@@ -30,7 +30,6 @@ public class AllowController {
 //        if (!dto.allowtype().equalsIgnoreCase(dto.allowtype())) {
 //            throw new KolayIkException(ErrorType.NAME_NOT_FOUND);
 //        }
-
         allowService.allowRegister(dto);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
