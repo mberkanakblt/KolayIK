@@ -47,7 +47,8 @@ public class KolayIkSecurityConfig {
                             "/dev/v1/membership/**"
                     ,"/dev/v1/company/**",
                             "/dev/v1/allow/**",
-                            "/dev/v1/allowmanage/**" // belirli bir URL adresine erişimi yönet
+                            "/dev/v1/allowmanage/**",
+                            "/dev/v1/shift/**"// belirli bir URL adresine erişimi yönet
 
                     ) // belirli bir URL adresine erişimi yönet
                     .permitAll() // yukarıdaki adrese ve adreslere izin ver.

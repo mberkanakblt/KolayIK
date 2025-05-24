@@ -1,8 +1,10 @@
 package com.kolayik.repository;
 
 import com.kolayik.entity.User;
+import com.kolayik.view.VwAllowManage;
 import com.kolayik.view.VwManager;
 import com.kolayik.view.VwPersonnel;
+import com.kolayik.view.VwUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +39,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM User u WHERE u.id IN (" +
             "SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.PERSONNEL)")
     List<VwPersonnel> getAllPersonnel();
+
+    @Query("SELECT new com.kolayik.view.VwUser(a.id, a.name, a.surname) FROM User a")
+    List<VwUser> getAllUser();
 }

@@ -4,14 +4,17 @@ import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.dto.response.ProfileResponseDto;
+import com.kolayik.dto.response.UserNameResponse;
 import com.kolayik.entity.User;
 
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
+import com.kolayik.view.VwAllowManage;
 import com.kolayik.view.VwManager;
 import com.kolayik.view.VwPersonnel;
+import com.kolayik.view.VwUser;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -103,6 +106,36 @@ public class UserController {
                       .data(optionalKullanici.get().getName())
                       .message("Kullanıcı adı başarı ile getirildi.")
               .build());
+    }
+    @GetMapping(USERNAME_SURNAME + "/{token}")
+    public ResponseEntity<BaseResponse<UserNameResponse>> getUserNameSurname(@PathVariable String token) {
+        Optional<Long> optionalUserId = jwtManager.validateToken(token);
+        if (optionalUserId.isEmpty()) {
+            throw new KolayIkException(ErrorType.INVALID_TOKEN);
+        }
+
+        Optional<User> optionalKullanici = userService.findByUserId(optionalUserId.get());
+        if (optionalKullanici.isEmpty()) {
+            throw new KolayIkException(ErrorType.USER_NOT_FOUND);
+        }
+
+        User kullanici = optionalKullanici.get();
+        UserNameResponse response = new UserNameResponse(kullanici.getName(), kullanici.getSurname());
+
+        return ResponseEntity.ok(BaseResponse.<UserNameResponse>builder()
+                .code(200)
+                .data(response)
+                .message("Kullanıcı adı ve soyadı başarı ile getirildi.")
+                .build());
+    }
+
+    @GetMapping(GET_USER_LIST)
+    public ResponseEntity<BaseResponse<List<VwUser>>> getAllAllow() {
+        return ResponseEntity.ok(BaseResponse.<List<VwUser>>builder()
+                .code(200)
+                .message("Tüm kullanıcılar listelendi")
+                .data(userService.getAllUser())
+                .build());
     }
     @GetMapping("/verify")
     public ResponseEntity<BaseResponse<String>> verifyEmail(@RequestParam String token) {

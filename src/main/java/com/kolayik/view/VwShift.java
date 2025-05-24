@@ -1,35 +1,20 @@
-package com.kolayik.entity;
+package com.kolayik.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.kolayik.utility.enums.Day;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
-
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "tblshift")
-
-public class Shift {
-    /**
-     * Bu sayfa Vardiya sayfasıdır
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class VwShift {
     private  Long id;
-    private  Long userId;
-    private   LocalDate startDate;
+    private Long userId;
+    private String name;
+    private String surname;
+    private LocalDate startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
@@ -37,6 +22,5 @@ public class Shift {
     private  Double totalWorkTime;
     private  Boolean isRepeat;
     private List<Integer> days;
-
 
 }
