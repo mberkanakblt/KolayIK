@@ -65,6 +65,8 @@ public class UserService {
 
         emailService.sendVerificationEmail(user.getEmail(), token);
 
+
+
     }
     public Optional<User> findByUserId(Long userId) {
         return userRepository.findById(userId);

@@ -14,10 +14,12 @@ public class RestApis {
 
 
 
+
     public static final String LOGIN = "/login";
     public static final String DO_REGISTER ="/doregister";
     public static final String ADD_COMMENT = "/add-comment";
     public static final String GET_COMMENT = "/get-comment";
+    public static final String USERNAME_SURNAME=  "/get-user-name-surname";
 
     public static final String CREATE_PERSONNEL = "/create-personnel";
     public static final String UPDATE_PERSONNEL = "/update-personnel";

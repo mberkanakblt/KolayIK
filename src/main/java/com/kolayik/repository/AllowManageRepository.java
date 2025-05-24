@@ -1,5 +1,6 @@
 package com.kolayik.repository;
 
+import com.kolayik.entity.Allow;
 import com.kolayik.entity.AllowManage;
 
 import com.kolayik.entity.User;
@@ -15,6 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AllowManageRepository extends JpaRepository<AllowManage, Long> {
+
+//    Optional<User> findByVerificationToken(String token);
+    Optional<Allow> findByAllowtype(String allowtype);
 
 
     Optional<User> findOptionalByNameAndSurname(String name, String surname);

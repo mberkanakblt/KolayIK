@@ -4,11 +4,16 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
+
+
+import java.security.Key;
+
+import java.util.*;
+
+import static javax.crypto.Cipher.SECRET_KEY;
 
 /**
  * ----- Token Sınıfı.
@@ -51,4 +56,39 @@ public class JwtManager {
             return Optional.empty();
         }
     }
+
+    public Long getIdFromToken(String token) {
+        try {
+            // "Bearer " varsa temizle
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
+            // Token 3 parçaya ayrılır: header.payload.signature
+            String[] parts = token.split("\\.");
+            if (parts.length < 2) {
+                throw new IllegalArgumentException("Geçersiz JWT token");
+            }
+
+            // Payload base64 decode edilir
+            String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]));
+
+            // JSON olarak parse edilir
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> payloadMap = mapper.readValue(payloadJson, Map.class);
+
+            // "id" alanı alınır
+            Object id = payloadMap.get("userId");
+            if (id == null) {
+                throw new IllegalArgumentException("Token içinde 'id' alanı yok");
+            }
+
+            return Long.parseLong(id.toString());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Token çözümlenemedi: " + e.getMessage());
+        }
+    }
+
+
 }

@@ -1,10 +1,16 @@
 package com.kolayik.controller;
+import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.AllowManageRegisterRequestDto;
 import com.kolayik.dto.request.AllowStateUpdateRequestDto;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.entity.User;
+import com.kolayik.exception.ErrorType;
+import com.kolayik.exception.KolayIkException;
 import com.kolayik.repository.AllowManageRepository;
 import com.kolayik.service.AllowManageService;
+import com.kolayik.service.UserService;
 import com.kolayik.view.VwAllowManage;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.kolayik.config.RestApis.*;
 
@@ -23,30 +30,61 @@ import static com.kolayik.config.RestApis.*;
 public class AllowManageController {
 
     private final AllowManageService allowManageService;
+    private final UserService userService;
     private final AllowManageRepository allowManageRepository;
+    private final JwtManager jwtManager;
 
 
-    @PostMapping(ALLOW_MANAGE_REGISTER)
-    public ResponseEntity<BaseResponse<Boolean>> allowRegister(@RequestBody @Valid AllowManageRegisterRequestDto dto) {
-//         if(!dto.user_id().equals(dto.user_id()))
-//                    throw new KolayIkException(ErrorType.NAME_NOT_FOUND);
-        allowManageService.allowManageRegister(dto);
-        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
-                .code(200)
-                .data(true)
-                .message("İzin başarılı şekilde oluşturuldu.")
-                .build());
+//    @PostMapping(ALLOW_MANAGE_REGISTER)
+//    public ResponseEntity<BaseResponse<Boolean>> allowRegister(@RequestBody @Valid AllowManageRegisterRequestDto dto) {
+////         if(!dto.user_id().equals(dto.user_id()))
+////                    throw new KolayIkException(ErrorType.NAME_NOT_FOUND);
+//        allowManageService.allowManageRegister(dto);
+//        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+//                .code(200)
+//                .data(true)
+//                .message("İzin başarılı şekilde oluşturuldu.")
+//                .build());
+//
+//
+//    }
+@PostMapping(ALLOW_MANAGE_REGISTER)
+public ResponseEntity<BaseResponse<Boolean>> allowRegister(
+        @RequestBody @Valid AllowManageRegisterRequestDto dto,
+        HttpServletRequest request) {
 
+    // Token'dan kullanıcı ID'si alınır
+    String token = request.getHeader("Authorization").replace("Bearer ", "");
+    Long userId = jwtManager.getIdFromToken(token); // → token içinden user ID çekiyoruz
 
-    }
+    allowManageService.allowManageRegister(dto, userId);
 
+    return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+            .code(200)
+            .data(true)
+            .message("İzin başarılı şekilde oluşturuldu.")
+            .build());
+}
+//@PostMapping(ALLOW_MANAGE_REGISTER )
+//public ResponseEntity<BaseResponse<Boolean>> allowRegister(
+//        @RequestBody @Valid AllowManageRegisterRequestDto dto,
+//        @PathVariable String token) {
+//
+//    allowManageService.allowManageRegister(dto, token);
+//
+//    return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+//            .code(200)
+//            .data(true)
+//            .message("İzin başarıyla kaydedildi")
+//            .build());
+//}
 
     @PostMapping(ALLOW_MANAGE_UPDATE)
-    public ResponseEntity<BaseResponse<Boolean>> allowUpdate(@RequestBody @Valid AllowManageRegisterRequestDto dto) {
+    public ResponseEntity<BaseResponse<Boolean>> allowUpdate(@RequestBody @Valid AllowManageRegisterRequestDto dto,  HttpServletRequest request) {
 
-//        if(!dto.user_id().equals(dto.user_id()))
-//            throw new KolayIkException(ErrorType.NAME_NOT_FOUND);
-        allowManageService.allowManageRegister(dto);
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        Long userId = jwtManager.getIdFromToken(token);
+        allowManageService.allowManageRegister(dto, userId);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
                 .data(true)
