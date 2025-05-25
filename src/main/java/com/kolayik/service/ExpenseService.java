@@ -1,8 +1,11 @@
 package com.kolayik.service;
 
 import com.kolayik.dto.request.AddExpenseRequestDto;
+import com.kolayik.entity.Company;
 import com.kolayik.entity.Expense;
 import com.kolayik.entity.User;
+import com.kolayik.exception.ErrorType;
+import com.kolayik.exception.KolayIkException;
 import com.kolayik.repository.ExpenseRepository;
 import com.kolayik.repository.UserRepository;
 import com.kolayik.utility.enums.Status;
@@ -42,11 +45,15 @@ public class ExpenseService {
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("Kullanıcı bulunamadı.");
         }
+        Company company = optionalUser.get().getCompany();
+
+
         Expense expense = Expense.builder()
                 .amount(dto.amount())
                 .date(LocalDateTime.now())
                 .description(dto.description())
                 .userId(userId)
+                .companyId(company.getId())
                 .fileUrl(dto.fileUrl())
                 .status(Status.ASKIDA)
                 .build();
@@ -79,6 +86,19 @@ public class ExpenseService {
             throw new RuntimeException("Kullanıcı bulunamadı.");
         }
        return expenseRepository.findAllByUserId(userId);
+
+    }
+
+    public List<Expense> getCompanyExpense(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+        Company company = user.getCompany();
+        if (company == null) {
+            throw new RuntimeException("Company not found.");
+        }
+        return expenseRepository.findAllByCompanyId(company.getId());
+
 
     }
 }

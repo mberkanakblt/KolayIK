@@ -29,4 +29,5 @@ public class Company {
     @JsonManagedReference
     User user;
 
+
 }

@@ -77,5 +77,14 @@ public class ExpenseController {
 
 
     }
+    @GetMapping("/get-company-expense")
+    public ResponseEntity<BaseResponse<List<Expense>>> getCompanyExpense(String token){
+        Optional<Long> optionalUserId = jwtManager.validateToken(token);
+        return ResponseEntity.ok(BaseResponse.<List<Expense>>builder()
+                .code(200)
+                .message("Success")
+                .data(expenseService.getCompanyExpense(optionalUserId.get()))
+                .build());
+    }
 
 }

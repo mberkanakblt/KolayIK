@@ -28,4 +28,5 @@ public class Expense {
     LocalDateTime date;
     Status status;
     Long userId;
+    Long companyId;
 }

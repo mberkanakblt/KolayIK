@@ -43,7 +43,7 @@ public class KolayIkSecurityConfig {
             req
                     .requestMatchers("v3/api-docs/**","/dev/v1/user/**",
                             "/dev/v1/comment/**",
-                            "/swagger-ui/**","/dev/v1/expense/**","/api/files/upload",
+                            "/swagger-ui/**","/dev/v1/expense/**","/api/files/upload","/api/files/view/**",
                             "/dev/v1/membership/**"
                     ,"/dev/v1/company/**",
                             "/dev/v1/allow/**",
