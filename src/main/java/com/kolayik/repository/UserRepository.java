@@ -37,4 +37,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM User u WHERE u.id IN (" +
             "SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.PERSONNEL)")
     List<VwPersonnel> getAllPersonnel();
+
+    List<User> findAllByCompanyId(Long id);
 }

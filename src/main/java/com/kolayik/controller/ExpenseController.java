@@ -3,8 +3,8 @@ package com.kolayik.controller;
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.AddExpenseRequestDto;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.dto.response.ExpenseResponseDto;
 import com.kolayik.entity.Expense;
-import com.kolayik.entity.User;
 import com.kolayik.service.ExpenseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -78,12 +78,21 @@ public class ExpenseController {
 
     }
     @GetMapping("/get-company-expense")
-    public ResponseEntity<BaseResponse<List<Expense>>> getCompanyExpense(String token){
+    public ResponseEntity<BaseResponse<List<Expense>>> getCompanyExpense(String token) {
         Optional<Long> optionalUserId = jwtManager.validateToken(token);
         return ResponseEntity.ok(BaseResponse.<List<Expense>>builder()
                 .code(200)
                 .message("Success")
                 .data(expenseService.getCompanyExpense(optionalUserId.get()))
+                .build());
+    }
+    @GetMapping("/get-company1-expense")
+    public ResponseEntity<BaseResponse<List<ExpenseResponseDto>>> getCompany1Expense(String token){
+        Optional<Long> optionalUserId = jwtManager.validateToken(token);
+        return ResponseEntity.ok(BaseResponse.<List<ExpenseResponseDto>>builder()
+                .code(200)
+                .message("Success")
+                .data(expenseService.getCompany1Expense(optionalUserId.get()))
                 .build());
     }
 

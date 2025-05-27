@@ -1,6 +1,7 @@
 package com.kolayik.service;
 
 import com.kolayik.dto.request.AddExpenseRequestDto;
+import com.kolayik.dto.response.ExpenseResponseDto;
 import com.kolayik.entity.Company;
 import com.kolayik.entity.Expense;
 import com.kolayik.entity.User;
@@ -53,7 +54,8 @@ public class ExpenseService {
                 .date(LocalDateTime.now())
                 .description(dto.description())
                 .userId(userId)
-                .companyId(company.getId())
+                .companyId(
+                        company.getId())
                 .fileUrl(dto.fileUrl())
                 .status(Status.ASKIDA)
                 .build();
@@ -100,5 +102,47 @@ public class ExpenseService {
         return expenseRepository.findAllByCompanyId(company.getId());
 
 
+    }
+
+    public List<ExpenseResponseDto> getCompany1Expense(Long userId) {
+        // Giriş yapan kullanıcıyı bul
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+        // Kullanıcının şirketini al
+        Company company = user.getCompany();
+        if (company == null) {
+            throw new RuntimeException("Company not found.");
+        }
+
+        // Şirkete ait kullanıcıları al
+        List<User> companyUsers = userRepository.findAllByCompanyId(company.getId());
+
+        // Kullanıcı id'lerini listele
+        List<Long> userIds = companyUsers.stream()
+                .map(User::getId)
+                .toList();
+
+        // Bu kullanıcıların yaptığı harcamaları al
+        List<Expense> expenses = expenseRepository.findAllByUserIdIn(userIds);
+
+        // Map: Expense -> DTO
+        return expenses.stream().map(expense -> {
+            // Harcamayı yapan kullanıcıyı bul
+            User expenseUser = companyUsers.stream()
+                    .filter(u -> u.getId().equals(expense.getUserId()))
+                    .findFirst()
+                    .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+            return new ExpenseResponseDto(
+                    expense.getId(),
+                    expense.getAmount(),
+                    expense.getDescription(),
+                    expense.getFileUrl(),
+                    expense.getDate(),
+                    expense.getStatus(),
+                    expenseUser.getName()
+            );
+        }).toList();
     }
 }
