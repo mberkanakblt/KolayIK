@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,8 +36,12 @@ public class FileViewController {
                 contentType = "application/octet-stream";
             }
 
+            // Dosya adını URL uyumlu hale getir
+            String encodedFileName = URLEncoder.encode(resource.getFilename(), StandardCharsets.UTF_8)
+                    .replaceAll("\\+", "%20");
+
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename*=UTF-8''" + encodedFileName)
                     .header(HttpHeaders.CONTENT_TYPE, contentType)
                     .body(resource);
 
