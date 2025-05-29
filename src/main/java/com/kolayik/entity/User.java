@@ -33,7 +33,8 @@ public class User {
     Boolean emailVerified;
     @Column(name = "verification_token")
     String verificationToken;
-    @OneToOne(mappedBy = "user")
+    @ManyToOne
+    @JoinColumn(name = "company_id")
     @JsonBackReference
     Company company;
 

@@ -30,7 +30,7 @@ public class CompanyService {
         Company company = Company.builder()
                 .name(dto.name())
                 .phone(dto.phone())
-                .user(optionalUser.get())
+                .user(List.of(optionalUser.get()))
                 .address(dto.address())
                 .sector(dto.sector())
                 .status(Status.ASKIDA)

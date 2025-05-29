@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,10 +26,10 @@ public class Company {
     String phone;
     Status status;
     String sector;
-    @OneToOne
+    @OneToMany
     @JoinColumn(name = "user_id")
     @JsonManagedReference
-    User user;
+    List<User> user;
 
 
 }
