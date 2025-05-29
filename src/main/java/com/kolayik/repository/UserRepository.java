@@ -37,4 +37,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM User u WHERE u.id IN (" +
             "SELECT ur.userId FROM UserRole ur WHERE ur.roleName = com.kolayik.utility.enums.Role.PERSONNEL)")
     List<VwPersonnel> getAllPersonnel();
+
+
+    List<User> findByNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(String term, String term1, String term2, String term3, String term4);
 }

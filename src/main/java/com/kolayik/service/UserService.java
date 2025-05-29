@@ -2,6 +2,7 @@ package com.kolayik.service;
 
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.ProfileResponseDto;
+import com.kolayik.entity.Company;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
 import com.kolayik.entity.UserRole;
@@ -17,12 +18,14 @@ import com.kolayik.view.VwPersonnel;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +35,6 @@ public class UserService {
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final UserRoleRepository userRoleRepository;
-
 
 
     public void doRegister(DoRegisterRequestDto dto) {
@@ -65,7 +67,9 @@ public class UserService {
 
         emailService.sendVerificationEmail(user.getEmail(), token);
 
+
     }
+
     public Optional<User> findByUserId(Long userId) {
         return userRepository.findById(userId);
     }
@@ -146,10 +150,6 @@ public class UserService {
     }
 
 
-
-    public List<User> getAllPersonnel() {
-        return userRepository.findAll();
-    }
     public User createPersonnel(@Valid CreatePersonnelDto createPersonnelDto) {
         if (userRepository.existsByEmail(createPersonnelDto.email())) {
             throw new KolayIkException(ErrorType.EMAIL_SIFRE_HATASI);
@@ -177,6 +177,7 @@ public class UserService {
 
         return savedUser;
     }
+
     public void deletePersonnelByUserId(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException("User not found for id: " + userId);
@@ -192,59 +193,59 @@ public class UserService {
     }
 
 
-    public void updatePersonnel(Long id, UpdatePersonnelDto dto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (dto.name() != null && !dto.name().isEmpty()) {
-            user.setName(dto.name());
+    public List<PersonnelSearchResponseDto> searchPersonnel(String term) {
+        if (term == null || term.trim().isEmpty()) {
+            return List.of();
         }
 
-        if (dto.surname() != null && !dto.surname().isEmpty()) {
-            user.setSurname(dto.surname());
-        }
+        List<User> users = userRepository.findByNameContainingIgnoreCaseOrSurnameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCaseOrCompanyNameContainingIgnoreCase(
+                term, term, term, term, term);
 
-        if (dto.address() != null && !dto.address().isEmpty()) {
-            user.setAddress(dto.address());
-        }
+        return users.stream()
+                .map(user -> {
+                    UserDto userDto = null;
+                    if (user.getCompany() != null && user.getCompany().getUser() != null) {
+                        userDto = new UserDto(
+                                user.getCompany().getUser().getId(),
+                                user.getCompany().getUser().getName(),
+                                user.getCompany().getUser().getEmail()
+                        );
+                    }
 
-        if (dto.phone() != null && !dto.phone().isEmpty()) {
-            user.setPhone(dto.phone());
-        }
+                    CompanyDto companyDto = null;
+                    if (user.getCompany() != null) {
+                        companyDto = new CompanyDto(
+                                user.getCompany().getId(),
+                                user.getCompany().getName(),
+                                user.getCompany().getAddress(),
+                                user.getCompany().getPhone(),
+                                user.getCompany().getStatus() != null ? user.getCompany().getStatus().toString() : null,
+                                user.getCompany().getSector(),
+                                userDto
+                        );
+                    }
 
-        if (dto.email() != null && !dto.email().isEmpty()) {
-            user.setEmail(dto.email());
-        }
-
-        if (dto.password() != null && !dto.password().isEmpty()) {
-            user.setPassword(dto.password());
-        }
-
-        if (dto.avatar() != null && !dto.avatar().isEmpty()) {
-            user.setAvatar(dto.avatar());
-        }
-
-        if (dto.status() != null) {
-            user.setStatus(dto.status());
-        }
-
-        if (dto.companyName() != null && !dto.companyName().isEmpty()) {
-            user.setCompanyName(dto.companyName());
-        }
-
-        userRepository.save(user);
-    }
-
-
-    public List<User> searchPersonnel(String term) {
-        String normalizedTerm = term.trim().toLowerCase();
-        return userRepository.searchByTerm(normalizedTerm);
+                    return new PersonnelSearchResponseDto(
+                            user.getId(),
+                            user.getName(),
+                            user.getSurname(),
+                            user.getAddress(),
+                            user.getPhone(),
+                            user.getEmail(),
+                            user.getAvatar(),
+                            user.getStatus() != null ? user.getStatus().toString() : null,
+                            user.getCompanyName(),
+                            companyDto
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
 
     public List<VwPersonnel> getVwPersonnel() {
         return userRepository.getAllPersonnel();
     }
+
     /**
      * Kullanıcının profil bilgilerini döner.
      */
@@ -283,15 +284,15 @@ public class UserService {
         userRepository.save(user);
 
     }
-    /**
-     * Kullanıcı hesabını pasifleştirir.
-     */
+
+
     public void deactivate(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
         user.setStatus(Status.PASIF);
         userRepository.save(user);
     }
+
     /**
      * Kullanıcı hesabını kalıcı olarak siler.
      */
@@ -322,4 +323,88 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
+
+
+    private PersonnelSearchResponseDto mapToPersonnelSearchResponseDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        UserDto userDto = null;
+        if (user.getCompany() != null && user.getCompany().getUser() != null) {
+            userDto = new UserDto(
+                    user.getCompany().getUser().getId(),
+                    user.getCompany().getUser().getName(),
+                    user.getCompany().getUser().getEmail()
+            );
+        }
+
+        CompanyDto companyDto = null;
+        if (user.getCompany() != null) {
+            companyDto = new CompanyDto(
+                    user.getCompany().getId(),
+                    user.getCompany().getName(),
+                    user.getCompany().getAddress(),
+                    user.getCompany().getPhone(),
+                    user.getCompany().getStatus() != null ? user.getCompany().getStatus().toString() : null,
+                    user.getCompany().getSector(),
+                    userDto
+            );
+        }
+
+        return new PersonnelSearchResponseDto(
+                user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getAddress(),
+                user.getPhone(),
+                user.getEmail(),
+                user.getAvatar(),
+                user.getStatus() != null ? user.getStatus().toString() : null,
+                user.getCompanyName(),
+                companyDto
+        );
+
+    }
+
+    public List<PersonnelSearchResponseDto> getAllPersonnel() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(this::mapToPersonnelSearchResponseDto)
+                .collect(Collectors.toList());
+    }
+
+
+    public void updatePersonnel(Long id, PersonnelUpdateRequestDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+        user.setName(dto.name());
+        user.setSurname(dto.surname());
+        user.setAddress(dto.address());
+        user.setPhone(dto.phone());
+        user.setEmail(dto.email());
+        user.setAvatar(dto.avatar());
+        user.setStatus(dto.status());
+        user.setCompanyName(dto.companyName());
+
+        userRepository.save(user);
+    }
+
+    public void updateStatus(Long userId, Status newStatus) {
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("Kullanıcı bulunamadı: ID=" + userId);
+        }
+
+        User user = userOpt.get();
+        user.setStatus(newStatus);
+        userRepository.save(user);
+    }
+
+
+
+
 }
