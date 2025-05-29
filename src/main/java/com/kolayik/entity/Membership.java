@@ -28,6 +28,7 @@ public class Membership {
     String description;
     Double price;
     Integer userLimit;
+    Long userId;
 
 
 
