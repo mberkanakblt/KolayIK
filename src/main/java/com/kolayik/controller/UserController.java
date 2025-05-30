@@ -6,7 +6,6 @@ import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.dto.response.UserNameResponse;
 import com.kolayik.entity.User;
-
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.service.UserRoleService;
@@ -62,6 +61,7 @@ public class UserController {
                         .message("Başaralı şekilde giriş yapıldı.")
                 .build());
     }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<BaseResponse<Boolean>> forgotPassword(@RequestParam String email){
         userService.forgotPassword(email);
