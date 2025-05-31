@@ -10,8 +10,10 @@ import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
+import com.kolayik.view.VwAllowManage;
 import com.kolayik.view.VwManager;
 import com.kolayik.view.VwPersonnel;
+import com.kolayik.view.VwUser;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ import static com.kolayik.config.RestApis.*;
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
+
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;
@@ -125,6 +128,15 @@ public class UserController {
                 .code(200)
                 .data(response)
                 .message("Kullanıcı adı ve soyadı başarı ile getirildi.")
+                .build());
+    }
+
+    @GetMapping(GET_USER_LIST)
+    public ResponseEntity<BaseResponse<List<VwUser>>> getAllAllow() {
+        return ResponseEntity.ok(BaseResponse.<List<VwUser>>builder()
+                .code(200)
+                .message("Tüm kullanıcılar listelendi")
+                .data(userService.getAllUser())
                 .build());
     }
     @GetMapping("/verify")

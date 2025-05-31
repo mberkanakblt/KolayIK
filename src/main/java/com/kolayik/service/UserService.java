@@ -14,6 +14,7 @@ import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 import com.kolayik.view.VwManager;
 import com.kolayik.view.VwPersonnel;
+import com.kolayik.view.VwUser;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -282,5 +283,9 @@ public class UserService {
     public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+    }
+
+    public List<VwUser> getAllUser() {
+        return userRepository.getAllUser();
     }
 }

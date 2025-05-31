@@ -11,6 +11,7 @@ public class RestApis {
     public static final String MEMBERSHIP = BASE_URL+"/membership";
     public static final String COMPANY = BASE_URL+"/company";
     public static final String EXPENSE = BASE_URL+"/expense";
+    public static final String SHIFT = BASE_URL+"/shift";
 
 
 
@@ -21,6 +22,7 @@ public class RestApis {
     public static final String ADD_COMMENT = "/add-comment";
     public static final String GET_COMMENT = "/get-comment";
     public static final String USERNAME_SURNAME=  "/get-user-name-surname";
+    public static final String GET_USER_LIST ="/get-user-list";
 
     public static final String CREATE_PERSONNEL = "/create-personnel";
     public static final String UPDATE_PERSONNEL = "/update-personnel";
@@ -44,6 +46,11 @@ public class RestApis {
     public static final String GET_REQUEST_ALLOW_MANAGE ="/get-request-allow-manage";
     public static final String GET_ALLOW_MANAGE_LIST ="/get-allow-manage-list";
     public static final String ALLOW_MANAGE_APROVE ="/aprove";
+
+    public static final String  ADD_SHIFT="/add-shift";
+    public static final String  UPDATE_SHIFT="/update-shift";
+    public static final String  DELETE_SHIFT="/delete-shift";
+    public static final String GET_SHIFT_LIST="/get-shift-list";
 
 
 
