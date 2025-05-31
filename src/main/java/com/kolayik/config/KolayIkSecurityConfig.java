@@ -48,7 +48,7 @@ public class KolayIkSecurityConfig {
                     ,"/dev/v1/company/**",
                             "/dev/v1/allow/**",
                             "/dev/v1/allowmanage/**",
-                            "/dev/v1/shift/**"// belirli bir URL adresine erişimi yönet
+                            "/dev/v1/shift/**",// belirli bir URL adresine erişimi yönet
                             "/dev/v1/allowmanage/**",
                             "/uploads/**" // belirli bir URL adresine erişimi yönet
 
