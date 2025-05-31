@@ -206,19 +206,6 @@ public class UserController {
         return ResponseEntity.ok(results);
     }
 
-    @PutMapping("/update-personnel-status/{id}/")
-    public ResponseEntity<?> updatePersonnel(
-            @PathVariable Long id,
-            @RequestBody UpdatePersonnelDto updatePersonnelDto) {
-        try {
-            userService.updatePersonnel(id, updatePersonnelDto);
-            return ResponseEntity.ok().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", e.getMessage()));
-        }
-    }
 
     @GetMapping("/get-profile")
     public ResponseEntity<BaseResponse<ProfileResponseDto>> getProfile(

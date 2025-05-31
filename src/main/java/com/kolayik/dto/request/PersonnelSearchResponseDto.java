@@ -9,7 +9,7 @@ public record PersonnelSearchResponseDto(
         String email,
         String avatar,
         String status,
-        String companyName,
-        CompanyDto company
+        String companyName
+
 ) {
 }

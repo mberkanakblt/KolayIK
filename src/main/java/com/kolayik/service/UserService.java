@@ -194,48 +194,7 @@ public class UserService {
     }
 
 
-    public void updatePersonnel(Long id, UpdatePersonnelDto dto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (dto.name() != null && !dto.name().isEmpty()) {
-            user.setName(dto.name());
-        }
-
-        if (dto.surname() != null && !dto.surname().isEmpty()) {
-            user.setSurname(dto.surname());
-        }
-
-        if (dto.address() != null && !dto.address().isEmpty()) {
-            user.setAddress(dto.address());
-        }
-
-        if (dto.phone() != null && !dto.phone().isEmpty()) {
-            user.setPhone(dto.phone());
-        }
-
-        if (dto.email() != null && !dto.email().isEmpty()) {
-            user.setEmail(dto.email());
-        }
-
-        if (dto.password() != null && !dto.password().isEmpty()) {
-            user.setPassword(dto.password());
-        }
-
-        if (dto.avatar() != null && !dto.avatar().isEmpty()) {
-            user.setAvatar(dto.avatar());
-        }
-
-        if (dto.status() != null) {
-            user.setStatus(dto.status());
-        }
-
-        if (dto.companyName() != null && !dto.companyName().isEmpty()) {
-            user.setCompanyName(dto.companyName());
-        }
-
-        userRepository.save(user);
-    }
 
 
     public List<User> searchPersonnel(String term) {
