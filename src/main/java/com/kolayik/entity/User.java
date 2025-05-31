@@ -28,6 +28,7 @@ public class User {
     @Column(nullable = false, length = 128)
     String password;
     String avatar;
+    @Enumerated(EnumType.STRING)
     Status status;
     String companyName;
     Boolean emailVerified;
@@ -37,6 +38,7 @@ public class User {
     @JoinColumn(name = "company_id")
     @JsonBackReference
     Company company;
+
 
 
 }
