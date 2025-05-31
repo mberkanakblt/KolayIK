@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class VwShift {
+
     private  Long id;
     private Long userId;
     private String name;

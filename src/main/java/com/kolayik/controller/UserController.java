@@ -35,6 +35,7 @@ import static com.kolayik.config.RestApis.*;
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
+
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;

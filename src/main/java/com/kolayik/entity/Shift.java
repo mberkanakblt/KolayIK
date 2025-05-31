@@ -22,6 +22,7 @@ import java.util.List;
 @Table(name = "tblshift")
 
 public class Shift {
+
     /**
      * Bu sayfa Vardiya sayfasıdır
      */
