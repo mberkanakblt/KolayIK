@@ -34,10 +34,7 @@ public class User {
     Boolean emailVerified;
     @Column(name = "verification_token")
     String verificationToken;
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    @JsonBackReference
-    Company company;
+    Long companyId;
 
 
 

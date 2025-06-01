@@ -27,15 +27,19 @@ public class CompanyService {
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("Kullanıcı bulunamadı.");
         }
+
         Company company = Company.builder()
                 .name(dto.name())
                 .phone(dto.phone())
-                .user(List.of(optionalUser.get()))
+                .userId(optionalUser.get().getId())
                 .address(dto.address())
                 .sector(dto.sector())
                 .status(Status.ASKIDA)
                 .build();
         companyRepository.save(company);
+        User user = optionalUser.get();
+        user.setCompanyId(company.getId());
+        userRepository.save(user);
     }
 
     public List<Company> getAllCompany() {

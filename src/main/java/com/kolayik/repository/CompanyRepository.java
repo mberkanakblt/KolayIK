@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CompanyRepository extends JpaRepository<Company, Long> {
-    @Query("SELECT new com.kolayik.view.VwCompany(c.name,c.status,u.name,u.email) "+"FROM Company c JOIN c.user u" )
+    @Query("SELECT new com.kolayik.view.VwCompany(c.name, c.status, u.name, u.email) " +
+            "FROM Company c JOIN User u ON c.userId = u.id")
     List<VwCompany> getAllCompany();
 
 }

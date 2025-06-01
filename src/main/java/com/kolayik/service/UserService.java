@@ -2,6 +2,7 @@ package com.kolayik.service;
 
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.ProfileResponseDto;
+import com.kolayik.entity.Company;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
 import com.kolayik.entity.UserRole;
@@ -40,6 +41,7 @@ public class UserService {
 
     public void doRegister(DoRegisterRequestDto dto) {
         String token = UUID.randomUUID().toString();
+
 
         User user = User.builder()
                 .name(dto.name())
@@ -155,10 +157,16 @@ public class UserService {
     public List<User> getAllPersonnel() {
         return userRepository.findAll();
     }
-    public User createPersonnel(@Valid CreatePersonnelDto createPersonnelDto) {
+    public User createPersonnel(@Valid CreatePersonnelDto createPersonnelDto,Long adminId) {
         if (userRepository.existsByEmail(createPersonnelDto.email())) {
             throw new KolayIkException(ErrorType.EMAIL_SIFRE_HATASI);
         }
+
+      Optional<User> admin = userRepository.findById(adminId);
+        if (admin.isEmpty()) {
+            throw new RuntimeException("Kullanıcı bulunamadı.");
+        }
+
 
         User user = User.builder()
                 .name(createPersonnelDto.name())
@@ -167,9 +175,11 @@ public class UserService {
                 .phone(createPersonnelDto.phone())
                 .email(createPersonnelDto.email())
                 .password(createPersonnelDto.password())
+                .emailVerified(true)
                 .avatar(createPersonnelDto.avatar())
                 .status(createPersonnelDto.status())
-                .companyName(createPersonnelDto.companyName())
+                .companyId(admin.get().getCompanyId())
+                .companyName(admin.get().getCompanyName())
                 .build();
 
         User savedUser = userRepository.save(user);

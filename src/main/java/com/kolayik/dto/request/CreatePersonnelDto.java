@@ -3,8 +3,8 @@ package com.kolayik.dto.request;
 import com.kolayik.utility.enums.Status;
 
 public record CreatePersonnelDto(
-        Long userid,
-        Long id,
+
+        String token,
         String name,
         String surname,
         String address,
@@ -12,6 +12,6 @@ public record CreatePersonnelDto(
         String email,
         String password,
         String avatar,
-        Status status,
-        String companyName
+        Status status
+
 ) { }

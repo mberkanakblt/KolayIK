@@ -180,9 +180,9 @@ public class UserController {
     public ResponseEntity<BaseResponse<Boolean>> createPersonnel(
             @RequestHeader Map<String, String> headers,
             @RequestBody @Valid CreatePersonnelDto createPersonnelDto) {
-
+        Optional<Long> optionalUserId = jwtManager.validateToken(createPersonnelDto.token());
         System.out.println("Headers: " + headers);
-        User user = userService.createPersonnel(createPersonnelDto);
+        User user = userService.createPersonnel(createPersonnelDto,optionalUserId.get());
         System.out.println("Created User: " + user);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)

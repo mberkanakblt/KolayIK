@@ -46,7 +46,7 @@ public class ExpenseService {
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("Kullanıcı bulunamadı.");
         }
-        Company company = optionalUser.get().getCompany();
+
 
 
         Expense expense = Expense.builder()
@@ -55,7 +55,7 @@ public class ExpenseService {
                 .description(dto.description())
                 .userId(userId)
                 .companyId(
-                        company.getId())
+                        optionalUser.get().getCompanyId())
                 .fileUrl(dto.fileUrl())
                 .status(Status.ASKIDA)
                 .build();
@@ -95,11 +95,8 @@ public class ExpenseService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
 
-        Company company = user.getCompany();
-        if (company == null) {
-            throw new RuntimeException("Company not found.");
-        }
-        return expenseRepository.findAllByCompanyId(company.getId());
+
+        return expenseRepository.findAllByCompanyId(user.getCompanyId());
 
 
     }
@@ -109,14 +106,10 @@ public class ExpenseService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
 
-        // Kullanıcının şirketini al
-        Company company = user.getCompany();
-        if (company == null) {
-            throw new RuntimeException("Company not found.");
-        }
+
 
         // Şirkete ait kullanıcıları al
-        List<User> companyUsers = userRepository.findAllByCompanyId(company.getId());
+        List<User> companyUsers = userRepository.findAllByCompanyId(user.getCompanyId());
 
         // Kullanıcı id'lerini listele
         List<Long> userIds = companyUsers.stream()

@@ -26,10 +26,7 @@ public class Company {
     String phone;
     Status status;
     String sector;
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    @JsonManagedReference
-    List<User> user;
+    Long userId;
 
 
 }
