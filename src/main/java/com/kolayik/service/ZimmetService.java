@@ -1,14 +1,16 @@
 package com.kolayik.service;
 
-import com.kolayik.dto.request.*;
+import com.kolayik.dto.request.ZimmetConfirmRequestDto;
+import com.kolayik.dto.request.ZimmetCreateRequestDto;
+import com.kolayik.dto.request.ZimmetUpdateRequestDto;
 import com.kolayik.dto.response.ZimmetDto;
-import com.kolayik.entity.ZimmetAssignment;
 import com.kolayik.entity.User;
-import com.kolayik.utility.enums.Status;
+import com.kolayik.entity.ZimmetAssignment;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.exception.ErrorType;
-import com.kolayik.repository.ZimmetRepository;
 import com.kolayik.repository.UserRepository;
+import com.kolayik.repository.ZimmetAssignmentRepository;
+import com.kolayik.utility.enums.ZimmetStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,78 +20,123 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ZimmetService {
-    private final ZimmetRepository repo;
+public class ZimmetService implements IZimmetService {
+
+    private final ZimmetAssignmentRepository zimmetRepo;
     private final UserRepository userRepo;
 
-    public List<ZimmetDto> getAllAssignmentsForCurrentUser() {
-        return repo.findAll().stream()
-                .map(this::mapToDto)
+    /**
+     * Entity → DTO dönüşümü
+     */
+    private ZimmetDto mapEntityToDto(ZimmetAssignment entity) {
+        return ZimmetDto.builder()
+                .id(entity.getId())
+                .userId(entity.getUser().getId())
+                .userFullName(entity.getUser().getName() + " " + entity.getUser().getSurname())
+                .itemName(entity.getItemName())
+                .assignedDate(entity.getAssignedDate())
+                .status(entity.getStatus())
+                .note(entity.getNote())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public ZimmetDto createZimmet(ZimmetCreateRequestDto createRequest) {
+        // 1) userEmail’e göre personeli bul
+        User user = userRepo.findByEmail(createRequest.getUserEmail())
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+        // 2) Zimmet entity’sini oluştur
+        ZimmetAssignment zimmet = ZimmetAssignment.builder()
+                .user(user)
+                .itemName(createRequest.getItemName())
+                .note(createRequest.getNote())
+                // assignedDate ve status, @PrePersist ile otomatik set edilecek
+                .build();
+
+        // 3) Kaydet, DTO’ya dön
+        ZimmetAssignment saved = zimmetRepo.save(zimmet);
+        return mapEntityToDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public ZimmetDto updateZimmet(ZimmetUpdateRequestDto updateRequest) {
+        // 1) Kayıt var mı kontrol et
+        ZimmetAssignment existing = zimmetRepo.findById(updateRequest.getId())
+                .orElseThrow(() -> new KolayIkException(ErrorType.ASSIGNMENT_NOT_FOUND));
+
+        // 2) Güncellenmek istenen yeni personel (ID üzerinden)
+        User user = userRepo.findById(updateRequest.getUserId())
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+        // 3) Alanları güncelle
+        existing.setUser(user);
+        existing.setItemName(updateRequest.getItemName());
+        existing.setNote(updateRequest.getNote());
+        // status yalnızca confirm/reject endpoint’inden değiştirilecek
+
+        ZimmetAssignment updated = zimmetRepo.save(existing);
+        return mapEntityToDto(updated);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ZimmetDto> getAllZimmet() {
+        return zimmetRepo.findAll()
+                .stream()
+                .map(this::mapEntityToDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public ZimmetDto createZimmet(ZimmetCreateRequestDto req) {
-        User user = userRepo.findByEmail(req.getPersonnelEmail())
-                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-        ZimmetAssignment e = ZimmetAssignment.builder()
-                .user(user)
-                .code(req.getCode())
-                .name(req.getName())
-                .model(req.getModel())
-                .assignedAt(req.getAssignedAt())
-                .status(Status.PASIF)
-                .build();
-        ZimmetAssignment saved = repo.save(e);
-        return mapToDto(saved);
-    }
-
-    @Transactional
-    public ZimmetDto updateZimmet(Long id, ZimmetUpdateRequestDto req) {
-        ZimmetAssignment e = repo.findById(id)
+    @Override
+    @Transactional(readOnly = true)
+    public ZimmetDto getZimmetById(Long id) {
+        ZimmetAssignment entity = zimmetRepo.findById(id)
                 .orElseThrow(() -> new KolayIkException(ErrorType.ASSIGNMENT_NOT_FOUND));
-        e.setCode(req.getCode());
-        e.setName(req.getName());
-        e.setModel(req.getModel());
-        e.setAssignedAt(req.getAssignedAt());
-        return mapToDto(repo.save(e));
+        return mapEntityToDto(entity);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ZimmetDto> getZimmetByUserId(Long userId) {
+        // 1) Personel var mı?
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+
+        // 2) O kullanıcıya ait tüm zimmetleri getir
+        return zimmetRepo.findByUser(user)
+                .stream()
+                .map(this::mapEntityToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public ZimmetDto confirmZimmet(ZimmetConfirmRequestDto confirmRequest) {
+        // 1) Kayıt bulundu mu?
+        ZimmetAssignment entity = zimmetRepo.findById(confirmRequest.getId())
+                .orElseThrow(() -> new KolayIkException(ErrorType.ASSIGNMENT_NOT_FOUND));
+
+        // 2) Sadece PENDING durumdakileri değiştirelim
+        if (entity.getStatus() != ZimmetStatus.PENDING) {
+            throw new KolayIkException(ErrorType.BADREQUEST);
+        }
+
+        // 3) Yeni durumu ata ve not’u güncelle
+        entity.setStatus(confirmRequest.getStatus());
+        entity.setNote(confirmRequest.getNote());
+
+        ZimmetAssignment updated = zimmetRepo.save(entity);
+        return mapEntityToDto(updated);
+    }
+
+    @Override
     @Transactional
     public void deleteZimmet(Long id) {
-        ZimmetAssignment e = repo.findById(id)
+        ZimmetAssignment existing = zimmetRepo.findById(id)
                 .orElseThrow(() -> new KolayIkException(ErrorType.ASSIGNMENT_NOT_FOUND));
-        repo.delete(e);
-    }
-
-    @Transactional
-    public ZimmetDto confirmAssignment(ZimmetConfirmRequestDto req) {
-        ZimmetAssignment e = repo.findById(req.getId())
-                .orElseThrow(() -> new KolayIkException(ErrorType.ASSIGNMENT_NOT_FOUND));
-        e.setStatus(Status.AKTIF);
-        e.setFeedback(null);
-        return mapToDto(repo.save(e));
-    }
-
-    @Transactional
-    public ZimmetDto rejectAssignment(ZimmetConfirmRequestDto req) {
-        ZimmetAssignment e = repo.findById(req.getId())
-                .orElseThrow(() -> new KolayIkException(ErrorType.ASSIGNMENT_NOT_FOUND));
-        e.setStatus(Status.ASKIDA);
-        e.setFeedback(req.getFeedback());
-        return mapToDto(repo.save(e));
-    }
-
-    private ZimmetDto mapToDto(ZimmetAssignment e) {
-        return ZimmetDto.builder()
-                .id(e.getId())
-                .personnelEmail(e.getUser().getEmail())
-                .code(e.getCode())
-                .name(e.getName())
-                .model(e.getModel())
-                .assignedAt(e.getAssignedAt())
-                .status(e.getStatus())
-                .feedback(e.getFeedback())
-                .build();
+        zimmetRepo.delete(existing);
     }
 }
