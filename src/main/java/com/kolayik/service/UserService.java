@@ -22,8 +22,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -198,9 +200,33 @@ public class UserService {
 
 
 
-    public List<User> searchPersonnel(String term) {
-        String normalizedTerm = term.trim().toLowerCase();
-        return userRepository.searchByTerm(normalizedTerm);
+    public List<PersonnelSearchResponseDto> searchPersonnel(String term) {
+        if (term == null || term.trim().isEmpty()) {
+            return List.of();    }
+        List<User> users = userRepository.searchByTerm(term);
+        return users.stream()
+                .map(user -> new PersonnelSearchResponseDto(
+                        user.getId(),
+                        user.getName(),
+                        user.getSurname(),
+                        user.getAddress(),
+                        user.getPhone(),
+                        user.getEmail(),
+                        user.getAvatar(),
+                        user.getStatus() != null ? user.getStatus().toString() : null
+                        // companyName kaldırıldı
+                         ))
+                        .collect(Collectors.toList());
+    }
+    public void updatePersonnel(Long id, @Valid PersonnelUpdateRequestDto dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
+        user.setName(dto.name());    user.setSurname(dto.surname());
+        user.setAddress(dto.address());
+        user.setPhone(dto.phone());
+        user.setEmail(dto.email());
+        user.setAvatar(dto.avatar());
+        userRepository.save(user);
     }
 
 
@@ -287,5 +313,11 @@ public class UserService {
 
     public List<VwUser> getAllUser() {
         return userRepository.getAllUser();
+    }
+    public void updateStatus(Long userId, Status newStatus) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("Kullanıcı bulunamadı: " + userId));
+        user.setStatus(newStatus);
+        userRepository.save(user);
     }
 }

@@ -8,8 +8,6 @@ public record PersonnelSearchResponseDto(
         String phone,
         String email,
         String avatar,
-        String status,
-        String companyName
+        String status) {
 
-) {
 }

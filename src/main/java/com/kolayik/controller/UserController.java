@@ -190,6 +190,15 @@ public class UserController {
                 .data(true)
                 .build());
     }
+    @PutMapping("update/personnel/{id}")
+    public ResponseEntity<BaseResponse<Boolean>> updatePersonnel(@PathVariable Long id,@RequestBody @Valid PersonnelUpdateRequestDto updateDto) {
+        userService.updatePersonnel(id, updateDto);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Personnel updated successfully")
+                .data(true)
+                .build());
+    }
 
     @PutMapping("/approved/{userId}")
     public ResponseEntity<BaseResponse<Boolean>> approvedUser(@PathVariable Long userId) {
@@ -213,8 +222,8 @@ public class UserController {
 
 
     @GetMapping("/search")
-    public ResponseEntity<List<User>> searchPersonnel(@RequestParam String term) {
-        List<User> results = userService.searchPersonnel(term);
+    public ResponseEntity<List<PersonnelSearchResponseDto>> searchPersonnel(@RequestParam String term) {
+        List<PersonnelSearchResponseDto> results = userService.searchPersonnel(term);
         return ResponseEntity.ok(results);
     }
 
@@ -255,5 +264,9 @@ public class UserController {
                         .message("Profil başarıyla güncellendi.")
                         .build()
         );
+    }
+    @PutMapping("/update-status/{userId}")
+    public void updateUserStatus(@PathVariable Long userId, @RequestBody StatusUpdateRequest request) {
+        userService.updateStatus(userId, request.status());
     }
 }
