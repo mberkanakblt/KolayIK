@@ -12,7 +12,7 @@ public class RestApis {
     public static final String COMPANY = BASE_URL+"/company";
     public static final String EXPENSE = BASE_URL+"/expense";
 
-
+    public static final String ZIMMET  = "/dev/v1/zimmet";
 
 
 
