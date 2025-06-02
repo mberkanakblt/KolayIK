@@ -12,7 +12,6 @@ public record DoLoginRequestDto(
         String email,
         @NotEmpty
         @NotNull
-        @Size(min = 8,max = 128)
         String password
 ) {
 }
