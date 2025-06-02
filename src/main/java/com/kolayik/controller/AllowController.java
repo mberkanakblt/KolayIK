@@ -3,9 +3,11 @@ package com.kolayik.controller;
 
 
 import com.kolayik.dto.request.AllowRegisterRequestDto;
+import com.kolayik.dto.request.RegisterShiftRequestDto;
 import com.kolayik.dto.response.BaseResponse;
 import com.kolayik.service.AllowService;
 import com.kolayik.view.VwAllow;
+import com.kolayik.view.VwShift;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +29,7 @@ public class AllowController {
 
     @PostMapping(ALLOW_REGISTER)
     public ResponseEntity<BaseResponse<Boolean>> allowRegister(@RequestBody @Valid AllowRegisterRequestDto dto) {
-//        if (!dto.allowtype().equalsIgnoreCase(dto.allowtype())) {
-//            throw new KolayIkException(ErrorType.NAME_NOT_FOUND);
-//        }
+
         allowService.allowRegister(dto);
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
@@ -41,18 +41,15 @@ public class AllowController {
     }
 
 
-    @PostMapping(ALLOW_UPDATE)
-    public ResponseEntity<BaseResponse<Boolean>> allowUpdate(@RequestBody @Valid AllowRegisterRequestDto dto) {
+    @PostMapping(ALLOW_UPDATE+"/{id}")
+    public ResponseEntity<BaseResponse<Boolean>> allowUpdate(@RequestBody @Valid AllowRegisterRequestDto dto,@PathVariable Long id) {
 
-//        if (!dto.allowtype().equalsIgnoreCase(dto.allowtype())) {
-//            throw new KolayIkException(ErrorType.NAME_NOT_FOUND);
-//        }
-        allowService.allowRegister(dto);
+        allowService.allowUpdate(dto,id);
 
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
                 .data(true)
-                .message("İzin başarılı şekilde  kaydedildi.")
+                .message("İzin  başarılı şekilde  güncellendi.")
                 .build());
     }
 
@@ -67,6 +64,18 @@ public class AllowController {
 
 
     }
+
+    @DeleteMapping(DELETE_ALLOW + "/{id}")
+    public ResponseEntity<BaseResponse<Boolean>> deleteShiftsByUserId(@PathVariable Long id) {
+        allowService.deleteAllow(id);
+
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .data(true)
+                .message("Vardiya(lar) başarılı şekilde silindi.")
+                .build());
+    }
+
 
 
 

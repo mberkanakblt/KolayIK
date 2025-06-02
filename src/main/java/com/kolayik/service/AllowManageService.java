@@ -28,35 +28,6 @@ public class AllowManageService {
     private final JwtManager jwtManager;
     private final UserService userService;
 
-//    public void allowManageRegister(AllowManageRegisterRequestDto dto) {
-//
-//        Optional<User> userOpt = userRepository.findByNameAndSurname(dto.name(), dto.surname());
-//        if (userOpt.isEmpty()) {
-//            throw new RuntimeException("Kullanıcı bulunamadı");
-//        }
-//        User user = userOpt.get();
-//
-//        Optional<Allow> allowOpt = allowRepository.findByAllowtype(dto.allowtype());
-//        if (allowOpt.isEmpty()) {
-//            throw new RuntimeException("İzin türü bulunamadı");
-//        }
-//        Allow allow = allowOpt.get();
-//
-//        AllowManage allowmanage = new AllowManage();
-//        allowmanage.setAllow_id(allow.getId());
-//        allowmanage.setUser_id(allow.getId());
-//        allowmanage.setName(dto.name());
-//        allowmanage.setSurname(dto.surname());
-//        allowmanage.setAllowstartdate(dto.allowstartdate());
-//        allowmanage.setAllowfinishdate(dto.allowfinishdate());
-//        allowmanage.setApproveddate(null);
-//        allowmanage.setRejecteddate(null);
-//        allowmanage.setAllowtype(dto.allowtype());
-//        allowmanage.setAllowstate(AllowState.BEKLEMEDE);
-//
-//        allowManageRepository.save(allowmanage);
-//
-//    }
 
     public void allowManageRegister(AllowManageRegisterRequestDto dto, Long userId) {
         User user = userRepository.findById(userId)
@@ -80,30 +51,6 @@ public class AllowManageService {
         allowManageRepository.save(allowManage);
     }
 
-//    public void allowManageRegister(AllowManageRegisterRequestDto dto, String token) {
-//        Long userId = jwtManager.validateToken(token)
-//                .orElseThrow(() -> new KolayIkException(ErrorType.INVALID_TOKEN));
-//
-//        User user = userService.findByUserId(userId)
-//                .orElseThrow(() -> new KolayIkException(ErrorType.USER_NOT_FOUND));
-//
-//        Allow allow = allowRepository.findByAllowtype(dto.allowtype())
-//                .orElseThrow(() -> new KolayIkException(ErrorType.ALLOW_TYPE_NOT_FOUND));
-//
-//        AllowManage allowManage = new AllowManage();
-//        allowManage.setUser_id(user.getId());
-//        allowManage.setAllow_id(allow.getId());
-//        allowManage.setName(user.getName());
-//        allowManage.setSurname(user.getSurname());
-//        allowManage.setAllowstartdate(dto.allowstartdate());
-//        allowManage.setAllowfinishdate(dto.allowfinishdate());
-//        allowManage.setApproveddate(null);
-//        allowManage.setRejecteddate(null);
-//        allowManage.setAllowtype(dto.allowtype());
-//        allowManage.setAllowstate(AllowState.BEKLEMEDE);
-//
-//        allowManageRepository.save(allowManage);
-//    }
 
     public Optional<User> findByUserId(Long userId) {
         return userRepository.findById(userId);

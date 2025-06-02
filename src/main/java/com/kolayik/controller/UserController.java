@@ -10,7 +10,6 @@ import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
-import com.kolayik.view.VwAllowManage;
 import com.kolayik.view.VwManager;
 import com.kolayik.view.VwPersonnel;
 import com.kolayik.view.VwUser;
@@ -39,6 +38,7 @@ public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;
+
 
     @PostMapping(DO_REGISTER)
     public ResponseEntity<BaseResponse<Boolean>> doRegister(@RequestBody @Valid DoRegisterRequestDto dto){

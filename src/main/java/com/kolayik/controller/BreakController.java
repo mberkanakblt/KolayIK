@@ -75,6 +75,15 @@ public class BreakController {
                 .data(response)
                 .build());
     }
+    @GetMapping("/my-breaks")public ResponseEntity<BaseResponse<List<BreakResponseDto>>> getMyBreaks(String token) {
+        Optional<Long> optionaluserId=jwtManager.validateToken(token);
+        List<BreakResponseDto> response = breakService.getBreakDtoByUserId(optionaluserId.get());
+        return ResponseEntity.ok(BaseResponse.<List<BreakResponseDto>>builder()
+                .code(200)
+                .message("Molalarınız başarıyla getirildi.")
+                .data(response)
+                .build());
+    }
 
 
 }

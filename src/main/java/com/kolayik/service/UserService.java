@@ -2,7 +2,6 @@ package com.kolayik.service;
 
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.ProfileResponseDto;
-import com.kolayik.entity.Company;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
 import com.kolayik.entity.UserRole;

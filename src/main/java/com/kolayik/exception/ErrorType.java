@@ -25,6 +25,7 @@ public enum ErrorType {
     INVALID_DATE_RANGE(406, "SEÇİLEN TARİHLER DOLUDUR",INTERNAL_SERVER_ERROR),
     ALLOW_TYPE_NOT_FOUND(402, "ALLOW TYPE NOT FOUND",INTERNAL_SERVER_ERROR),
     INTERNAL_SERVER(5000, "Sunucuda beklenmeyen bir hata",INTERNAL_SERVER_ERROR),
+
     ASSIGNMENT_NOT_FOUND(3001, "Zimmet atanması bulunamadı", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(1401, "Kullanıcının rolü bulunamadı.",BAD_REQUEST);
 
