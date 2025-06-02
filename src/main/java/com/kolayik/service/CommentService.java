@@ -1,5 +1,7 @@
 package com.kolayik.service;
 
+import com.kolayik.dto.request.CommentRequest;
+import com.kolayik.dto.request.UpdateCommentDto;
 import com.kolayik.entity.Comment;
 import com.kolayik.entity.User;
 import com.kolayik.repository.CommentRepository;
@@ -20,8 +22,8 @@ public class CommentService {
 
 
     public void addComment(Long userId,String description) {
-        if (commentRepository.existsByUserId(userId)) {
-            throw new RuntimeException("User has already added a comment.");
+        if (commentRepository.findByUserId(userId).isPresent()) {
+            throw new IllegalStateException("User has already submitted a comment.");
         }
 
         User user = userRepository.findById(userId)
@@ -39,5 +41,22 @@ public class CommentService {
     public List<VwComment> getComment() {
         return commentRepository.getAllComment();
 
+    }
+
+    public void editComment(UpdateCommentDto dto,Long userId) {
+        Comment comment = commentRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Comment not found "));
+
+        comment.setDescription(dto.description());
+        comment.setCommentDate(LocalDateTime.now());
+
+        commentRepository.save(comment);
+
+
+
+    }
+
+    public void deleteComment(Long commentId) {
+        commentRepository.deleteById(commentId);
     }
 }
