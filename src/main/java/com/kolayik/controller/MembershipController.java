@@ -54,5 +54,25 @@ public class MembershipController {
                         .data(true)
                 .build());
     }
+    @PutMapping("/edit-membership")
+    public ResponseEntity<BaseResponse<Boolean>> editMembership(@RequestBody AddMembershipRequestDto dto,Long membershipId){
+        membershipService.editMembership(dto,membershipId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Success")
+                .data(true)
+                .build());
+
+
+    }
+    @DeleteMapping("/delete-membership")
+    public ResponseEntity<BaseResponse<Boolean>> deleteMembership(Long membershipId){
+        membershipService.deleteMembership(membershipId);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .message("Success")
+                .data(true)
+                .build());
+    }
 
 }

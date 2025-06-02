@@ -45,7 +45,7 @@ public class KolayIkSecurityConfig {
                             "/dev/v1/comment/**",
                             "/swagger-ui/**","/dev/v1/expense/**","/api/files/upload","/api/files/view/**",
                             "/dev/v1/membership/**"
-                    ,"/dev/v1/company/**",
+                             ,"/dev/v1/company/**",
                             "/dev/v1/allow/**",
                             "/dev/v1/break/**",
                             "/dev/v1/allowmanage/**",

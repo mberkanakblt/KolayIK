@@ -28,5 +28,6 @@ public class Expense {
     LocalDateTime date;
     Status status;
     Long userId;
+    String userName;
     Long companyId;
 }

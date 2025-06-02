@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,4 +44,25 @@ public class MembershipService {
     }
 
 
+    public void editMembership( AddMembershipRequestDto dto,Long membershipId) {
+        Membership membership = membershipRepository.findById(membershipId)
+                .orElseThrow(() -> new RuntimeException("Membership not found with ID: " + membershipId));
+
+        membership.setName(dto.name());
+        membership.setPlan(dto.plan());
+        membership.setDescription(dto.description());
+        membership.setPrice(dto.price());
+        membership.setUserLimit(dto.userLimit());
+        membership.setCreatedAt(LocalDateTime.now());
+        membershipRepository.save(membership);
+
+
+
+
+
+    }
+
+    public void deleteMembership(Long membershipId) {
+        membershipRepository.deleteById(membershipId);
+    }
 }

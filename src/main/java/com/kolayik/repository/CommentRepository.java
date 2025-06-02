@@ -12,4 +12,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "FROM Comment c JOIN c.user u")
     List<VwComment> getAllComment();
 
+    boolean existsByUserId(Long userId);
 }

@@ -20,6 +20,10 @@ public class CommentService {
 
 
     public void addComment(Long userId,String description) {
+        if (commentRepository.existsByUserId(userId)) {
+            throw new RuntimeException("User has already added a comment.");
+        }
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
