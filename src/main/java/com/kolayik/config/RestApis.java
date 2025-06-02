@@ -32,6 +32,7 @@ public class RestApis {
 
 
     public static final String ALLOW = BASE_URL+"/allow";
+    public static final String   DELETE_ALLOW="/delete-allow";
 
     public static final String ALLOW_REGISTER ="/allowregister";
     public static final String ALLOW_UPDATE ="/allowupdate";
