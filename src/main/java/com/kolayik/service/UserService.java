@@ -329,4 +329,27 @@ public class UserService {
         user.setStatus(newStatus);
         userRepository.save(user);
     }
+
+    public void addAdmin(AddAdminRequestDto dto) {
+        User user = User.builder()
+                .name(dto.name())
+                .surname(dto.surname())
+                .password(dto.password())
+                .email(dto.email())
+                .phone("55555555555")
+                .companyName("kolayIk")
+                .avatar("resim123")
+                .address("admin")
+                .status(Status.AKTIF)
+                .emailVerified(true)
+                .build();
+
+        userRepository.save(user);
+        UserRole userRole = UserRole.builder()
+                .userId(user.getId())
+                .roleName(Role.SITE_ADMIN)
+                .build();
+        userRoleRepository.save(userRole);
+
+    }
 }

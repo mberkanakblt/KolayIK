@@ -3,13 +3,18 @@ package com.kolayik.controller;
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.dto.response.LoginResponse;
 import com.kolayik.dto.response.ProfileResponseDto;
 import com.kolayik.dto.response.UserNameResponse;
 import com.kolayik.entity.User;
+import com.kolayik.entity.UserRole;
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
+import com.kolayik.repository.UserRepository;
+import com.kolayik.repository.UserRoleRepository;
 import com.kolayik.service.UserRoleService;
 import com.kolayik.service.UserService;
+import com.kolayik.utility.enums.Role;
 import com.kolayik.view.VwManager;
 import com.kolayik.view.VwPersonnel;
 import com.kolayik.view.VwUser;
@@ -38,6 +43,7 @@ public class UserController {
     private final UserService userService;
     private final UserRoleService userRoleService;
     private final JwtManager jwtManager;
+    private final UserRoleRepository userRoleRepository;
 
 
     @PostMapping(DO_REGISTER)
@@ -52,18 +58,56 @@ public class UserController {
                         .message("Üyelik başarılı şekilde oluşturuldu.")
                 .build());
     }
-    @PostMapping(LOGIN)
-    public ResponseEntity<BaseResponse<String>> doLogin(@RequestBody @Valid DoLoginRequestDto dto){
-        // email ve şifre yi vererek kullanıcını var olup olmadığını sorguluyorum.
-        Optional<User> optionalKullanici = userService.findByEmailPassword(dto);
-        if(optionalKullanici.isEmpty()) // böyle bir kullanıcı yok
-            throw  new KolayIkException(ErrorType.EMAIL_SIFRE_HATASI);
-        return ResponseEntity.ok(BaseResponse.<String>builder()
-                        .code(200)
-                        .data(jwtManager.createToken(optionalKullanici.get().getId()))
-                        .message("Başaralı şekilde giriş yapıldı.")
+    @PostMapping("/add-admin")
+    public ResponseEntity<BaseResponse<Boolean>> addAdmin(@RequestBody AddAdminRequestDto dto){
+        if(!dto.password().equals(dto.rePassword()))
+            throw new KolayIkException(ErrorType.SIFREHATASI);
+        userService.addAdmin(dto);
+        return ResponseEntity.ok(BaseResponse.<Boolean>builder()
+                .code(200)
+                .data(true)
+                .message("Üyelik başarılı şekilde oluşturuldu.")
                 .build());
     }
+//    @PostMapping(LOGIN)
+//    public ResponseEntity<BaseResponse<String>> doLogin(@RequestBody @Valid DoLoginRequestDto dto){
+//        // email ve şifre yi vererek kullanıcını var olup olmadığını sorguluyorum.
+//        Optional<User> optionalKullanici = userService.findByEmailPassword(dto);
+//        if(optionalKullanici.isEmpty()) // böyle bir kullanıcı yok
+//            throw  new KolayIkException(ErrorType.EMAIL_SIFRE_HATASI);
+//        return ResponseEntity.ok(BaseResponse.<String>builder()
+//                        .code(200)
+//                        .data(jwtManager.createToken(optionalKullanici.get().getId()))
+//                        .message("Başaralı şekilde giriş yapıldı.")
+//                .build());
+//    }
+@PostMapping(LOGIN)
+public ResponseEntity<BaseResponse<LoginResponse>> doLogin(@RequestBody @Valid DoLoginRequestDto dto){
+    // Kullanıcı sorgulanıyor
+    Optional<User> optionalKullanici = userService.findByEmailPassword(dto);
+    if(optionalKullanici.isEmpty())
+        throw new KolayIkException(ErrorType.EMAIL_SIFRE_HATASI);
+
+    User user = optionalKullanici.get();
+
+    // Token oluşturuluyor
+    String token = jwtManager.createToken(user.getId());
+
+    // Kullanıcının rolü alınıyor
+    List<UserRole> userRoles = userRoleRepository.findByUserId(user.getId());
+    if (userRoles.isEmpty())
+        throw new KolayIkException(ErrorType.ROLE_NOT_FOUND); // Yeni bir ErrorType tanımlayabilirsin
+
+    Role role = userRoles.get(0).getRoleName(); // Şimdilik ilk rol alınıyor
+
+    LoginResponse loginResponse = new LoginResponse(token, role);
+
+    return ResponseEntity.ok(BaseResponse.<LoginResponse>builder()
+            .code(200)
+            .data(loginResponse)
+            .message("Başarılı şekilde giriş yapıldı.")
+            .build());
+}
 
     @PostMapping("/forgot-password")
     public ResponseEntity<BaseResponse<Boolean>> forgotPassword(@RequestParam String email){

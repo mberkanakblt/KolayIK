@@ -29,6 +29,9 @@ public class CompanyController {
     @PostMapping("/add-company")
     public ResponseEntity<BaseResponse<Boolean>> addCompany(@RequestBody AddCompanyRequestDto dto){
         Optional<Long> optionalUserId = jwtManager.validateToken(dto.token());
+        if (optionalUserId != null) {
+            throw new RuntimeException("Bu kullanıcıya ait zaten bir şirket mevcut.");
+        }
         companyService.addCompany(dto,optionalUserId.get());
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
