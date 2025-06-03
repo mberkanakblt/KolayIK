@@ -29,16 +29,12 @@ public class CompanyController {
     @PostMapping("/add-company")
     public ResponseEntity<BaseResponse<Boolean>> addCompany(@RequestBody AddCompanyRequestDto dto){
         Optional<Long> optionalUserId = jwtManager.validateToken(dto.token());
-        if (optionalUserId != null) {
-            throw new RuntimeException("Bu kullanıcıya ait zaten bir şirket mevcut.");
-        }
         companyService.addCompany(dto,optionalUserId.get());
         return ResponseEntity.ok(BaseResponse.<Boolean>builder()
                 .code(200)
                 .message("Success")
                 .data(true)
                 .build());
-
     }
 
     @GetMapping("/get-all-company")
@@ -47,6 +43,15 @@ public class CompanyController {
                         .code(200)
                         .message("Success")
                         .data(companyService.getAllCompany())
+                .build());
+    }
+    @GetMapping("/onay")
+    public ResponseEntity<BaseResponse<List<Company>>> onay(String token){
+        Optional<Long> optionalUserId = jwtManager.validateToken(token);
+        return ResponseEntity.ok(BaseResponse.<List<Company>>builder()
+                .code(200)
+                .message("Success")
+                .data(companyService.getOnay(optionalUserId.get()))
                 .build());
     }
     @PutMapping("/approved/{companyId}")

@@ -79,5 +79,11 @@ public class CompanyService {
     }
 
 
-
+    public List<Company> getOnay(Long userId) {
+        List<Company> companies = companyRepository.getStatusCompanyId(userId);
+        for (Company company : companies) {
+            System.out.println("Durum: " + company.getStatus());
+        }
+        return companies;
+    }
 }

@@ -58,7 +58,7 @@ public class KolayIkSecurityConfig {
                     /**
                      * Aşağıdakiler rollere göre izin verme şuanda roller kapalidir.!!
                      */
-      //                 .requestMatchers("/dev/v1/comment/add-comment").hasAuthority("MANAGER")
+              //        .requestMatchers("/dev/v1/comment/add-comment","").hasAuthority("COMPANY_ADMIN")
                     // Yukarıdaki, Oturum açanın yetki kimliği USER, ADMİN (VS)... tipindeyse erişime izin ver
                     .anyRequest() //yapılan tüm istek türleri(/admin ,/user,comment/getById...)
                     .authenticated(); // oturum açma zorunluluğu getirir.
