@@ -4,6 +4,7 @@ import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.CommentRequest;
 import com.kolayik.dto.request.UpdateCommentDto;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.entity.Comment;
 import com.kolayik.service.CommentService;
 import com.kolayik.view.VwComment;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -68,6 +69,17 @@ public class CommentController {
                 .build());
 
     }
+    @GetMapping("/get-my-comment")
+    public ResponseEntity<BaseResponse<List<Comment>>> getMyComment(String token){
+        Optional<Long> optionalUserId = jwtManager.validateToken(token);
+        return ResponseEntity.ok(BaseResponse.<List<Comment>>builder()
+                .code(200)
+                .data(commentService.getMyCommet(optionalUserId.get()))
+                .message("Success")
+                .build());
+
+    }
+
 
 
 }

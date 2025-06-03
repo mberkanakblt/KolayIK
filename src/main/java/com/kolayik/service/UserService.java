@@ -2,11 +2,13 @@ package com.kolayik.service;
 
 import com.kolayik.dto.request.*;
 import com.kolayik.dto.response.ProfileResponseDto;
+import com.kolayik.entity.Company;
 import com.kolayik.entity.PasswordResetToken;
 import com.kolayik.entity.User;
 import com.kolayik.entity.UserRole;
 import com.kolayik.exception.ErrorType;
 import com.kolayik.exception.KolayIkException;
+import com.kolayik.repository.CompanyRepository;
 import com.kolayik.repository.PasswordResetTokenRepository;
 import com.kolayik.repository.UserRepository;
 import com.kolayik.repository.UserRoleRepository;
@@ -35,6 +37,7 @@ public class UserService {
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final UserRoleRepository userRoleRepository;
+    private final CompanyRepository companyRepository;
 
 
 
@@ -161,11 +164,25 @@ public class UserService {
             throw new KolayIkException(ErrorType.EMAIL_SIFRE_HATASI);
         }
 
-      Optional<User> admin = userRepository.findById(adminId);
+        Optional<User> admin = userRepository.findById(adminId);
         if (admin.isEmpty()) {
             throw new RuntimeException("Kullanıcı bulunamadı.");
         }
 
+        // Şirketin aktif olup olmadığını kontrol et
+        Long companyId = admin.get().getCompanyId();
+        if (companyId == null) {
+            throw new RuntimeException("Kullanıcının bağlı olduğu bir şirket bulunamadı.");
+        }
+
+        Optional<Company> companyOpt = companyRepository.findById(companyId);
+        if (companyOpt.isEmpty()) {
+            throw new RuntimeException("Şirket bulunamadı.");
+        }
+
+        if (companyOpt.get().getStatus() != Status.AKTIF) {
+            throw new RuntimeException("Şirket aktif değil. Personel eklenemez.");
+        }
 
         User user = User.builder()
                 .name(createPersonnelDto.name())
@@ -177,7 +194,7 @@ public class UserService {
                 .emailVerified(true)
                 .avatar(createPersonnelDto.avatar())
                 .status(createPersonnelDto.status())
-                .companyId(admin.get().getCompanyId())
+                .companyId(companyId)
                 .companyName(admin.get().getCompanyName())
                 .build();
 

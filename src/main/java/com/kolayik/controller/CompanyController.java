@@ -3,8 +3,10 @@ package com.kolayik.controller;
 import com.kolayik.config.JwtManager;
 import com.kolayik.dto.request.AddCompanyRequestDto;
 import com.kolayik.dto.response.BaseResponse;
+import com.kolayik.dto.response.CompanyResponseDto;
 import com.kolayik.entity.Company;
 import com.kolayik.service.CompanyService;
+import com.kolayik.utility.enums.Status;
 import com.kolayik.view.VwCompany;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -37,18 +39,27 @@ public class CompanyController {
                 .build());
     }
 
-    @GetMapping("/get-all-company")
-    public ResponseEntity<BaseResponse<List<Company>>> getAllCompany(){
-        return ResponseEntity.ok(BaseResponse.<List<Company>>builder()
-                        .code(200)
-                        .message("Success")
-                        .data(companyService.getAllCompany())
-                .build());
-    }
+//    @GetMapping("/get-all-company")
+//    public ResponseEntity<BaseResponse<List<Company>>> getAllCompany(){
+//        return ResponseEntity.ok(BaseResponse.<List<Company>>builder()
+//                        .code(200)
+//                        .message("Success")
+//                        .data(companyService.getAllCompany())
+//                .build());
+//    }
+@GetMapping("/get-all-company")
+public ResponseEntity<BaseResponse<List<CompanyResponseDto>>> getAllCompany(){
+    return ResponseEntity.ok(BaseResponse.<List<CompanyResponseDto>>builder()
+            .code(200)
+            .message("Success")
+            .data(companyService.getAllCompany())
+            .build());
+}
+
     @GetMapping("/onay")
-    public ResponseEntity<BaseResponse<List<Company>>> onay(String token){
+    public ResponseEntity<BaseResponse<List<Status>>> onay(String token){
         Optional<Long> optionalUserId = jwtManager.validateToken(token);
-        return ResponseEntity.ok(BaseResponse.<List<Company>>builder()
+        return ResponseEntity.ok(BaseResponse.<List<Status>>builder()
                 .code(200)
                 .message("Success")
                 .data(companyService.getOnay(optionalUserId.get()))

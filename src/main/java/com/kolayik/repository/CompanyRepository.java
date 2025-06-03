@@ -15,4 +15,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     @Query("SELECT c FROM Company c WHERE c.userId = :userId")
     List<Company> getStatusCompanyId(@Param("userId") Long userId);
+
+    boolean existsByUserId(Long userId);
 }

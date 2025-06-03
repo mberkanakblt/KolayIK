@@ -59,4 +59,8 @@ public class CommentService {
     public void deleteComment(Long commentId) {
         commentRepository.deleteById(commentId);
     }
+
+    public List<Comment> getMyCommet(Long userId) {
+        return commentRepository.findAllByUserId(userId);
+    }
 }

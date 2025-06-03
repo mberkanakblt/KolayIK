@@ -1,6 +1,7 @@
 package com.kolayik.service;
 
 import com.kolayik.dto.request.AddCompanyRequestDto;
+import com.kolayik.dto.response.CompanyResponseDto;
 import com.kolayik.entity.Company;
 import com.kolayik.entity.User;
 import com.kolayik.exception.ErrorType;
@@ -27,6 +28,9 @@ public class CompanyService {
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("Kullanıcı bulunamadı.");
         }
+        if (companyRepository.existsByUserId(userId)) {
+            throw new RuntimeException("Kullanıcı zaten bir şirkete başvurmuş.");
+        }
 
         Company company = Company.builder()
                 .name(dto.name())
@@ -42,9 +46,29 @@ public class CompanyService {
         userRepository.save(user);
     }
 
-    public List<Company> getAllCompany() {
-        return companyRepository.findAll();
-    }
+//    public List<Company> getAllCompany() {
+//        return companyRepository.findAll();
+//    }
+public List<CompanyResponseDto> getAllCompany() {
+    List<Company> companies = companyRepository.findAll();
+
+    return companies.stream().map(company -> {
+        String userName = userRepository.findById(company.getUserId())
+                .map(User::getName)
+                .orElse("Bilinmiyor");
+
+        return new CompanyResponseDto(
+                company.getId(),
+                company.getName(),
+                company.getAddress(),
+                company.getPhone(),
+                company.getStatus(),
+                company.getSector(),
+                company.getUserId(),
+                userName
+        );
+    }).toList();
+}
 
     public void approved(Long companyId) {
         Company company = companyRepository.findById(companyId)
@@ -79,11 +103,10 @@ public class CompanyService {
     }
 
 
-    public List<Company> getOnay(Long userId) {
+    public List<Status> getOnay(Long userId) {
         List<Company> companies = companyRepository.getStatusCompanyId(userId);
-        for (Company company : companies) {
-            System.out.println("Durum: " + company.getStatus());
-        }
-        return companies;
+        return companies.stream()
+                .map(Company::getStatus)
+                .toList();
     }
 }
