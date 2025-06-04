@@ -2,9 +2,13 @@ package com.kolayik.service;
 
 import com.kolayik.dto.request.AddMembershipRequestDto;
 import com.kolayik.dto.request.BuyMembershipRequestDto;
+import com.kolayik.entity.Company;
 import com.kolayik.entity.Membership;
+import com.kolayik.entity.User;
+import com.kolayik.repository.CompanyRepository;
 import com.kolayik.repository.MembershipRepository;
 import com.kolayik.repository.UserRepository;
+import com.kolayik.utility.enums.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +21,7 @@ import java.util.Optional;
 public class MembershipService {
     private final MembershipRepository membershipRepository;
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
 
     public void addMembership(AddMembershipRequestDto dto) {
         Membership membership = Membership.builder()
@@ -35,12 +40,43 @@ public class MembershipService {
     }
 
     public void buyMembership(Long membershipId,Long userId) {
-        userRepository.findById(userId)
+        // Kullanıcıyı getir
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Membership membership = membershipRepository.findById(membershipId).get();
-        membership.setUserId(userId);
-        membershipRepository.save(membership);
+        // Şirket kontrolü
+        if (user.getCompanyId() == null) {
+            throw new IllegalStateException("User is not associated with any company.");
+        }
+
+        Company company = companyRepository.findById(user.getCompanyId())
+                .orElseThrow(() -> new RuntimeException("Company not found with id: " + user.getCompanyId()));
+
+        if (company.getStatus() != Status.AKTIF) {
+            throw new IllegalStateException("User's company is not active. Cannot assign membership.");
+        }
+
+        // Kullanıcının mevcut üyeliği varsa kontrol et
+        Optional<Membership> existingMembershipOpt = membershipRepository.findByUserId(userId);
+        if (existingMembershipOpt.isPresent()) {
+            Membership existingMembership = existingMembershipOpt.get();
+
+            // Kullanıcı aynı üyelik paketini almaya çalışıyorsa hata ver
+            if (existingMembership.getId().equals(membershipId)) {
+                throw new IllegalStateException("You have already purchased this membership.");
+            }
+
+            // Farklı paketse eskiyi sil
+            membershipRepository.delete(existingMembership);
+        }
+
+        // Yeni üyeliği getir
+        Membership newMembership = membershipRepository.findById(membershipId)
+                .orElseThrow(() -> new RuntimeException("Membership not found with id: " + membershipId));
+
+        // Yeni üyeliği kullanıcıya ata
+        newMembership.setUserId(userId);
+        membershipRepository.save(newMembership);
     }
 
 
