@@ -201,7 +201,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         UserRole userRole = UserRole.builder()
-                .roleName(Role.PERSONNEL)
+                .roleName(createPersonnelDto.roleName())
                 .userId(savedUser.getId())
                 .build();
         userRoleRepository.save(userRole);

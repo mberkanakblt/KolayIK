@@ -1,5 +1,6 @@
 package com.kolayik.dto.request;
 
+import com.kolayik.utility.enums.Role;
 import com.kolayik.utility.enums.Status;
 
 public record CreatePersonnelDto(
@@ -10,6 +11,7 @@ public record CreatePersonnelDto(
         String address,
         String phone,
         String email,
+        Role roleName,
         String password,
         String avatar,
         Status status
